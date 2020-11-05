@@ -2,6 +2,7 @@ package id.hanifsr.gamedb.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,10 +12,7 @@ import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
 import id.hanifsr.gamedb.data.source.GameData
 import id.hanifsr.gamedb.ui.detail.DetailActivity
-import id.hanifsr.gamedb.util.OnItemClickCallback
-import id.hanifsr.gamedb.util.OnSnapPositionChangeListener
-import id.hanifsr.gamedb.util.SnapOnScrollListener
-import id.hanifsr.gamedb.util.attachSnapHelperWithListener
+import id.hanifsr.gamedb.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +43,8 @@ class MainActivity : AppCompatActivity() {
 		val adapter = GameRVAdapter(list)
 		rvGames.adapter = adapter
 
+		rvGames.addItemDecoration(ItemDecoration(screenWidth()))
+
 		adapter.setOnItemClickCallback(object : OnItemClickCallback {
 			override fun onItemClicked(game: Game) {
 				showSelectedGame(game)
@@ -66,5 +66,12 @@ class MainActivity : AppCompatActivity() {
 		val intent = Intent(this@MainActivity, DetailActivity::class.java)
 		intent.putExtra(DetailActivity.EXTRA_TITLE, game.title)
 		startActivity(intent)
+	}
+
+	private fun screenWidth(): Int {
+		val displayMetrics = DisplayMetrics()
+		windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+		return displayMetrics.widthPixels
 	}
 }

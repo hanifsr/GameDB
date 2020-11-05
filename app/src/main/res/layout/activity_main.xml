@@ -3,7 +3,6 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="@color/blue_900_light"
 	tools:context=".ui.main.MainActivity">
 
 	<androidx.recyclerview.widget.RecyclerView
@@ -12,8 +11,8 @@
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
 		android:clipToPadding="false"
-		android:paddingStart="14dp"
-		android:paddingEnd="14dp"
+		android:paddingStart="12dp"
+		android:paddingEnd="12dp"
 		tools:listitem="@layout/item_games" />
 
 	<TextView
@@ -22,6 +21,7 @@
 		android:layout_height="wrap_content"
 		android:layout_below="@id/rv_games"
 		android:textAlignment="center"
+		android:textColor="@color/black"
 		android:textSize="24sp"
 		android:textStyle="bold" />
 
@@ -31,6 +31,7 @@
 		android:layout_height="wrap_content"
 		android:layout_below="@id/tv_title"
 		android:textAlignment="center"
+		android:textColor="@color/black"
 		android:textSize="14sp"
 		android:textStyle="italic" />
 
