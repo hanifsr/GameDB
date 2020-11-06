@@ -65,6 +65,9 @@ class MainActivity : AppCompatActivity() {
 	private fun showSelectedGame(game: Game) {
 		val intent = Intent(this@MainActivity, DetailActivity::class.java)
 		intent.putExtra(DetailActivity.EXTRA_TITLE, game.title)
+		intent.putExtra(DetailActivity.EXTRA_GENRE, game.genre)
+		intent.putExtra(DetailActivity.EXTRA_POSTER, game.poster)
+		intent.putExtra(DetailActivity.EXTRA_BANNER, game.banner)
 		startActivity(intent)
 	}
 

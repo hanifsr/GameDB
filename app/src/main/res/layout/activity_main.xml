@@ -23,7 +23,8 @@
 		android:textAlignment="center"
 		android:textColor="@color/black"
 		android:textSize="24sp"
-		android:textStyle="bold" />
+		android:textStyle="bold"
+		tools:text="@string/title" />
 
 	<TextView
 		android:id="@+id/tv_genre"
@@ -33,6 +34,7 @@
 		android:textAlignment="center"
 		android:textColor="@color/black"
 		android:textSize="14sp"
-		android:textStyle="italic" />
+		android:textStyle="italic"
+		tools:text="@string/genre" />
 
 </RelativeLayout>

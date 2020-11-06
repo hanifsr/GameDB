@@ -4,7 +4,7 @@ import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
 
 object GameData {
-    private val title = arrayOf(
+	private val title = arrayOf(
 		"Horizon Zero Dawn",
 		"The Witcher 3: Wild Hunt",
 		"Bioshock Infinite",
@@ -12,7 +12,7 @@ object GameData {
 		"Dota 2"
 	)
 
-    private val genre = arrayOf(
+	private val genre = arrayOf(
 		"Role-playing (RPG), Shooter",
 		"Adventure, Role-playing (RPG)",
 		"Adventure, Shooter",
@@ -20,7 +20,7 @@ object GameData {
 		"MOBA"
 	)
 
-    private val poster = intArrayOf(
+	private val poster = intArrayOf(
 		R.drawable.hzd_poster,
 		R.drawable.witcher3_poster,
 		R.drawable.bioshock_infinite_poster,
@@ -28,17 +28,26 @@ object GameData {
 		R.drawable.dota2_poster
 	)
 
-    val data: ArrayList<Game>
-        get() {
-            val list = arrayListOf<Game>()
-            for (position in title.indices) {
-                val game = Game()
-                game.title = title[position]
-                game.genre = genre[position]
-                game.poster = poster[position]
-                list.add(game)
-            }
+	private val banner = intArrayOf(
+		R.drawable.hzd_banner,
+		R.drawable.witcher3_banner,
+		R.drawable.bioshock_infinite_banner,
+		R.drawable.ac_odyssey_banner,
+		R.drawable.dota2_banner
+	)
 
-            return list
-        }
+	val data: ArrayList<Game>
+		get() {
+			val list = arrayListOf<Game>()
+			for (position in title.indices) {
+				val game = Game()
+				game.title = title[position]
+				game.genre = genre[position]
+				game.poster = poster[position]
+				game.banner = banner[position]
+				list.add(game)
+			}
+
+			return list
+		}
 }
