@@ -10,17 +10,21 @@
 		android:supportsRtl="true"
 		android:theme="@style/Theme.GameDB">
 		<activity
-			android:name=".ui.detail.DetailActivity"
-			android:parentActivityName=".ui.main.MainActivity" />
-		<activity
-			android:name=".ui.main.MainActivity"
-			android:launchMode="singleTop">
+			android:name=".ui.splash.SplashActivity"
+			android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".ui.detail.DetailActivity"
+			android:parentActivityName=".ui.main.MainActivity" />
+		<activity
+			android:name=".ui.main.MainActivity"
+			android:launchMode="singleTop"
+			android:screenOrientation="portrait" />
 	</application>
 
 </manifest>

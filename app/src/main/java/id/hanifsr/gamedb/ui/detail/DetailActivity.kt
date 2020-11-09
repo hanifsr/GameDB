@@ -1,45 +1,34 @@
 package id.hanifsr.gamedb.ui.detail
 
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import id.hanifsr.gamedb.R
+import id.hanifsr.gamedb.data.model.Game
+import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
 
 	companion object {
-		const val EXTRA_TITLE = "extra_title"
-		const val EXTRA_GENRE = "extra_genre"
-		const val EXTRA_POSTER = "extra_poster"
-		const val EXTRA_BANNER = "extra_banner"
+		const val EXTRA_GAME = "extra_game"
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_detail)
 
-		val tvDetailTitle: TextView = findViewById(R.id.tv_detail_title)
-		val tvDetailGenre: TextView = findViewById(R.id.tv_detail_genre)
-		val ivDetailPoster: ImageView = findViewById(R.id.iv_detail_poster)
-		val ivDetailBanner: ImageView = findViewById(R.id.iv_detail_banner)
+		val game = intent.getParcelableExtra<Game>(EXTRA_GAME) as Game
 
-		val title = intent.getStringExtra(EXTRA_TITLE)
-		val genre = intent.getStringExtra(EXTRA_GENRE)
-		val poster = intent.getIntExtra(EXTRA_POSTER, 0)
-		val banner = intent.getIntExtra(EXTRA_BANNER, 0)
-
-		tvDetailTitle.text = title
-		tvDetailGenre.text = genre
+		tv_detail_title.text = game.title
+		tv_detail_genre.text = game.genre
 
 		Glide.with(this)
-			.load(poster)
-			.into(ivDetailPoster)
+			.load(game.poster)
+			.into(iv_detail_poster)
 
 		Glide.with(this)
-			.load(banner)
-			.into(ivDetailBanner)
+			.load(game.banner)
+			.into(iv_detail_banner)
 
 		supportActionBar?.title = title
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)

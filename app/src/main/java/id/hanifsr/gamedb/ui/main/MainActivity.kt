@@ -3,34 +3,25 @@ package id.hanifsr.gamedb.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
 import id.hanifsr.gamedb.data.source.GameData
 import id.hanifsr.gamedb.ui.detail.DetailActivity
 import id.hanifsr.gamedb.util.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-	private lateinit var rvGames: RecyclerView
 	private var list: ArrayList<Game> = arrayListOf()
-
-	private lateinit var tvTitle: TextView
-	private lateinit var tvGenre: TextView
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
 
-		rvGames = findViewById(R.id.rv_games)
-		rvGames.setHasFixedSize(true)
-
-		tvTitle = findViewById(R.id.tv_title)
-		tvGenre = findViewById(R.id.tv_genre)
+		rv_games.setHasFixedSize(true)
 
 		list.addAll(GameData.data)
 		showRecyclerView()
@@ -39,11 +30,11 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun showRecyclerView() {
-		rvGames.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+		rv_games.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 		val adapter = GameRVAdapter(list)
-		rvGames.adapter = adapter
+		rv_games.adapter = adapter
 
-		rvGames.addItemDecoration(ItemDecoration(screenWidth()))
+		rv_games.addItemDecoration(ItemDecoration(screenWidth()))
 
 		adapter.setOnItemClickCallback(object : OnItemClickCallback {
 			override fun onItemClicked(game: Game) {
@@ -52,22 +43,19 @@ class MainActivity : AppCompatActivity() {
 		})
 
 		val snapHelper = PagerSnapHelper()
-		rvGames.attachSnapHelperWithListener(snapHelper,
+		rv_games.attachSnapHelperWithListener(snapHelper,
 			SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
 			object : OnSnapPositionChangeListener {
 				override fun onSnapPositionChange(position: Int) {
-					tvTitle.text = list[position].title
-					tvGenre.text = list[position].genre
+					tv_title.text = list[position].title
+					tv_genre.text = list[position].genre
 				}
 			})
 	}
 
 	private fun showSelectedGame(game: Game) {
 		val intent = Intent(this@MainActivity, DetailActivity::class.java)
-		intent.putExtra(DetailActivity.EXTRA_TITLE, game.title)
-		intent.putExtra(DetailActivity.EXTRA_GENRE, game.genre)
-		intent.putExtra(DetailActivity.EXTRA_POSTER, game.poster)
-		intent.putExtra(DetailActivity.EXTRA_BANNER, game.banner)
+		intent.putExtra(DetailActivity.EXTRA_GAME, game)
 		startActivity(intent)
 	}
 
