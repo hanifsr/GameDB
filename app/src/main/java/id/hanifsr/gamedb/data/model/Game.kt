@@ -1,12 +1,11 @@
 package id.hanifsr.gamedb.data.model
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-@Parcelize
 data class Game(
-	var title: String = "",
-	var genre: String = "",
-	var poster: Int = 0,
-	var banner: Int = 0
-) : Parcelable
+	val id: Int,
+	val name: String,
+	val genres: List<Genre>,
+	val released: String,
+	val background_image: String,
+	val publishers: List<Publisher>,
+	val description_raw: String
+)

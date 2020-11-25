@@ -7,40 +7,44 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
-import id.hanifsr.gamedb.util.OnItemClickCallback
 import kotlinx.android.synthetic.main.item_games.view.*
 
-class GameRVAdapter(private val listGame: ArrayList<Game>) :
-	RecyclerView.Adapter<GameRVAdapter.GameRVHolder>() {
+class GameRVAdapter(
+	private var games: List<Game>,
+	private val onItemClick: (game: Game) -> Unit
+) : RecyclerView.Adapter<GameRVAdapter.GameRVHolder>() {
 
-	private lateinit var onItemClickCallback: OnItemClickCallback
-
-	fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
-		this.onItemClickCallback = onItemClickCallback
+	fun updateGames(games: List<Game>) {
+		this.games = games
+		notifyDataSetChanged()
 	}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameRVHolder {
 		val view =
-			LayoutInflater.from(parent.context).inflate(R.layout.item_games, parent, false)
+			LayoutInflater
+				.from(parent.context)
+				.inflate(R.layout.item_games, parent, false)
 		return GameRVHolder(view)
 	}
 
 	override fun onBindViewHolder(holder: GameRVHolder, position: Int) {
-		holder.bind(listGame[position])
+		holder.bind(games[position], position)
 	}
 
 	override fun getItemCount(): Int {
-		return listGame.size
+		return games.size
 	}
 
 	inner class GameRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-		fun bind(game: Game) {
+		fun bind(game: Game, position: Int) {
 			with(itemView) {
 				Glide.with(itemView.context)
-					.load(game.poster)
+					.load(game.background_image)
 					.into(iv_poster)
 
-				itemView.setOnClickListener { onItemClickCallback.onItemClicked(game) }
+				tv_item_number.text = (position + 1).toString()
+
+				itemView.setOnClickListener { onItemClick.invoke(game) }
 			}
 		}
 	}

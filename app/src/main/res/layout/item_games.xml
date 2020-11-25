@@ -2,8 +2,8 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
+	android:layout_width="300dp"
+	android:layout_height="200dp"
 	android:layout_gravity="center"
 	android:layout_marginStart="12dp"
 	android:layout_marginTop="16dp"
@@ -11,30 +11,25 @@
 	android:layout_marginBottom="16dp"
 	app:cardCornerRadius="6dp">
 
-	<androidx.constraintlayout.widget.ConstraintLayout
-		android:layout_width="200dp"
-		android:layout_height="300dp">
+	<ImageView
+		android:id="@+id/iv_poster"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:contentDescription="@string/poster"
+		android:scaleType="fitXY"
+		tools:src="@android:color/darker_gray" />
 
-		<androidx.cardview.widget.CardView
-			android:id="@+id/cv_poster"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			app:cardCornerRadius="6dp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent">
-
-			<ImageView
-				android:id="@+id/iv_poster"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:contentDescription="@string/poster"
-				android:scaleType="fitXY"
-				tools:src="@android:color/darker_gray" />
-
-		</androidx.cardview.widget.CardView>
-
-	</androidx.constraintlayout.widget.ConstraintLayout>
-
+	<TextView
+		android:id="@+id/tv_item_number"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="5dp"
+		android:layout_marginTop="5dp"
+		android:background="@drawable/white_circle"
+		android:gravity="center"
+		android:textColor="@color/black"
+		android:textSize="12sp"
+		android:textStyle="italic"
+		tools:text="0" />
 
 </androidx.cardview.widget.CardView>

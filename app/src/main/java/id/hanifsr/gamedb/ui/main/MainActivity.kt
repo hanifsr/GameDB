@@ -2,20 +2,27 @@ package id.hanifsr.gamedb.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.DisplayMetrics
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
-import id.hanifsr.gamedb.data.source.GameData
+import id.hanifsr.gamedb.data.source.remote.RemoteRepository
 import id.hanifsr.gamedb.ui.detail.DetailActivity
-import id.hanifsr.gamedb.util.*
+import id.hanifsr.gamedb.util.OnSnapPositionChangeListener
+import id.hanifsr.gamedb.util.SnapOnScrollListener
+import id.hanifsr.gamedb.util.attachSnapHelperWithListener
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-	private var list: ArrayList<Game> = arrayListOf()
+	private lateinit var adapter: GameRVAdapter
+
+	private val TAG = MainActivity::class.java.simpleName
+	private var games: List<Game> = listOf()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -23,46 +30,60 @@ class MainActivity : AppCompatActivity() {
 
 		rv_games.setHasFixedSize(true)
 
-		list.addAll(GameData.data)
 		showRecyclerView()
+
+		RemoteRepository.getPopularGames(
+			getDates(),
+			onSuccess = ::onPopularGamesFetched,
+			onError = ::onError
+		)
 
 		supportActionBar?.elevation = 0F
 	}
 
 	private fun showRecyclerView() {
 		rv_games.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-		val adapter = GameRVAdapter(list)
+		adapter = GameRVAdapter(listOf()) { game -> showSelectedGame(game) }
 		rv_games.adapter = adapter
-
-		rv_games.addItemDecoration(ItemDecoration(screenWidth()))
-
-		adapter.setOnItemClickCallback(object : OnItemClickCallback {
-			override fun onItemClicked(game: Game) {
-				showSelectedGame(game)
-			}
-		})
 
 		val snapHelper = PagerSnapHelper()
 		rv_games.attachSnapHelperWithListener(snapHelper,
 			SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
 			object : OnSnapPositionChangeListener {
 				override fun onSnapPositionChange(position: Int) {
-					tv_title.text = list[position].title
-					tv_genre.text = list[position].genre
+					tv_title.text = games[position].name
+
+					val genreList = mutableListOf<String>()
+					for (genre in games[position].genres) {
+						genreList.add(genre.name)
+					}
+					tv_genre.text = genreList.joinToString()
 				}
 			})
 	}
 
 	private fun showSelectedGame(game: Game) {
 		val intent = Intent(this@MainActivity, DetailActivity::class.java)
-		intent.putExtra(DetailActivity.EXTRA_GAME, game)
+		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
 		startActivity(intent)
 	}
 
-	private fun screenWidth(): Int {
-		val displayMetrics = DisplayMetrics()
-		windowManager.defaultDisplay.getMetrics(displayMetrics)
+	private fun getDates(): String {
+		val calendar = Calendar.getInstance()
+		val year = calendar.get(Calendar.YEAR)
+		val month = calendar.get(Calendar.MONTH) + 1
+		val firstDay = "$year-$month-01"
+		val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
-		return displayMetrics.widthPixels
+		return "$firstDay,$today"
+	}
+
+	private fun onPopularGamesFetched(games: List<Game>) {
+		adapter.updateGames(games)
+		this.games = games
+	}
+
+	private fun onError() {
+		Toast.makeText(this, "Failed to fetch data", Toast.LENGTH_SHORT).show()
 	}
 }
