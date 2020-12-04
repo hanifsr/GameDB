@@ -3,13 +3,12 @@ package id.hanifsr.gamedb.ui.detail
 import android.os.Bundle
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_LEGACY
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
-import id.hanifsr.gamedb.data.source.remote.RemoteRepository
 import kotlinx.android.synthetic.main.activity_detail.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,6 +20,7 @@ class DetailActivity : AppCompatActivity() {
 	}
 
 	private lateinit var adapter: GenreRVAdapter
+	private lateinit var detailViewModel: DetailViewModel
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -28,18 +28,21 @@ class DetailActivity : AppCompatActivity() {
 
 		val id = intent.getIntExtra(EXTRA_ID, 0)
 
-		rv_detail_genre.setHasFixedSize(true)
-
 		showRecyclerViewGenre()
 
-		RemoteRepository.getGameDetail(
-			id,
-			onSuccess = ::gameDetailFetched,
-			onError = ::onError
-		)
+		detailViewModel = ViewModelProvider(
+			this,
+			ViewModelProvider.NewInstanceFactory()
+		).get(DetailViewModel::class.java)
+		detailViewModel.getDetail(id).observe(this, {
+			if (it != null) {
+				gameDetailFetched(it)
+			}
+		})
 	}
 
 	private fun showRecyclerViewGenre() {
+		rv_detail_genre.setHasFixedSize(true)
 		rv_detail_genre.layoutManager =
 			LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 		adapter = GenreRVAdapter(listOf())
@@ -78,10 +81,6 @@ class DetailActivity : AppCompatActivity() {
 		tv_detail_description.text = game.description_raw
 
 		setTitleActionBar(game.name)
-	}
-
-	private fun onError() {
-		Toast.makeText(this, "Failed to fetch data", Toast.LENGTH_SHORT).show()
 	}
 
 	private fun setTitleActionBar(title: String) {

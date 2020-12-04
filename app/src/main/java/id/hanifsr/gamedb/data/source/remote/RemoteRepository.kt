@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RemoteRepository {
 
-	private const val BASE_URL = "https://api.rawg.io/api/"
+	private const val BASE_URL = BuildConfig.RAWG_BASE_URL
 	private const val API_KEY = BuildConfig.RAWG_API_KEY
 	private val rawgApi: RAWGApi
 

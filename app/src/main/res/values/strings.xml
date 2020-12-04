@@ -10,4 +10,7 @@
 	<string name="publisher">&lt;b>Publishers&lt;/b>&lt;br>%s</string>
 	<string name="description">Description</string>
 	<string name="released">&lt;b>Released on&lt;/b>&lt;br>%s</string>
+	<string name="title_home">Home</string>
+	<string name="title_search">Search</string>
+	<string name="title_favourites">Favourites</string>
 </resources>

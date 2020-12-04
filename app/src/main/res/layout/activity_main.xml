@@ -1,66 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	tools:context=".ui.main.MainActivity">
 
-	<TextView
-		android:id="@+id/tv_popular"
+	<com.google.android.material.bottomnavigation.BottomNavigationView
+		android:id="@+id/nav_view"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="0dp"
+		android:layout_marginEnd="0dp"
+		android:background="?android:attr/windowBackground"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toRightOf="parent"
+		app:menu="@menu/bottom_nav_menu" />
+
+	<fragment
+		android:id="@+id/nav_host_fragment"
+		android:name="androidx.navigation.fragment.NavHostFragment"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="18dp"
-		android:layout_marginTop="16dp"
-		android:layout_marginEnd="18dp"
-		android:text="@string/popular"
-		android:textColor="@color/black"
-		android:textSize="18sp"
-		android:textStyle="bold" />
+		android:layout_height="match_parent"
+		app:defaultNavHost="true"
+		app:layout_constraintBottom_toTopOf="@id/nav_view"
+		app:layout_constraintLeft_toLeftOf="parent"
+		app:layout_constraintRight_toRightOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:navGraph="@navigation/mobile_navigation" />
 
-	<TextView
-		android:id="@+id/tv_this_month"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_below="@id/tv_popular"
-		android:layout_marginStart="18dp"
-		android:layout_marginEnd="18dp"
-		android:text="@string/most_popular_games_this_month" />
-
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/rv_games"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@id/tv_this_month"
-		android:layout_centerHorizontal="true"
-		android:clipToPadding="false"
-		android:paddingStart="12dp"
-		android:paddingEnd="12dp"
-		tools:listitem="@layout/item_games" />
-
-	<TextView
-		android:id="@+id/tv_title"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_below="@id/rv_games"
-		android:layout_marginStart="12dp"
-		android:layout_marginEnd="12dp"
-		android:textAlignment="center"
-		android:textColor="@color/black"
-		android:textSize="24sp"
-		android:textStyle="bold"
-		tools:text="@string/title" />
-
-	<TextView
-		android:id="@+id/tv_genre"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_below="@id/tv_title"
-		android:layout_marginStart="12dp"
-		android:layout_marginEnd="12dp"
-		android:textAlignment="center"
-		android:textColor="@color/black"
-		android:textSize="14sp"
-		android:textStyle="italic"
-		tools:text="@string/genre" />
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
