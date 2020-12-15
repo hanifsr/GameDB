@@ -80,4 +80,35 @@ object RemoteRepository {
 				}
 			})
 	}
+
+	fun searchGames(
+		keyword: String,
+		onSuccess: (games: List<Game>) -> Unit,
+		onError: () -> Unit
+	) {
+		rawgApi.searchGames(API_KEY, keyword, "-added")
+			.enqueue(object : Callback<GamesResponse> {
+				override fun onResponse(
+					call: Call<GamesResponse>,
+					response: Response<GamesResponse>
+				) {
+					if (response.isSuccessful) {
+						val gamesResponse = response.body()
+
+						if (gamesResponse != null) {
+							onSuccess.invoke(gamesResponse.results)
+						} else {
+							onError.invoke()
+						}
+					} else {
+						onError.invoke()
+					}
+				}
+
+				override fun onFailure(call: Call<GamesResponse>, t: Throwable) {
+					onError.invoke()
+				}
+
+			})
+	}
 }

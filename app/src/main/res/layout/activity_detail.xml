@@ -100,6 +100,20 @@
 			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre"
 			tools:text="@string/publisher" />
 
+		<com.like.LikeButton
+			android:id="@+id/lb_detail_favourite"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:circle_end_color="@color/turquoise_400"
+			app:circle_start_color="@color/blue_900"
+			app:dots_primary_color="@color/blue_900"
+			app:dots_secondary_color="@color/turquoise_400"
+			app:icon_size="20dp"
+			app:icon_type="heart"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@id/guideline2"
+			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
+
 		<TextView
 			android:id="@+id/tv_detail_description"
 			android:layout_width="0dp"

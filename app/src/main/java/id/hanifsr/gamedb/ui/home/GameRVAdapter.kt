@@ -1,4 +1,4 @@
-package id.hanifsr.gamedb.ui.main
+package id.hanifsr.gamedb.ui.home
 
 import android.view.LayoutInflater
 import android.view.View

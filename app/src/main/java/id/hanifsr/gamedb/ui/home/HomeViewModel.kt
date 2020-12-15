@@ -14,18 +14,18 @@ class HomeViewModel : ViewModel() {
 	fun getGames(dates: String): LiveData<List<Game>> {
 		RemoteRepository.getPopularGames(
 			dates,
-			onSuccess = ::onPopularGamesFetched,
-			onError = ::onError
+			onSuccess = ::onPopularGamesSucceed,
+			onError = ::onPopularGamesFailed
 		)
 
 		return games
 	}
 
-	private fun onPopularGamesFetched(games: List<Game>) {
+	private fun onPopularGamesSucceed(games: List<Game>) {
 		this.games.postValue(games)
 	}
 
-	private fun onError() {
+	private fun onPopularGamesFailed() {
 		Log.i("HomeViewModel", "onError: Home Fragment ViewModel")
 	}
 }

@@ -23,4 +23,11 @@ interface RAWGApi {
 		@Path("id") id: Int,
 		@Query("key") apiKey: String
 	): Call<Game>
+
+	@GET("games")
+	fun searchGames(
+		@Query("key") apiKey: String,
+		@Query("search") keyword: String,
+		@Query("ordering") ordering: String
+	): Call<GamesResponse>
 }

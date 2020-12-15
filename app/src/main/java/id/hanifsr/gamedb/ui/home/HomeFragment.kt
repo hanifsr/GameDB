@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
 import id.hanifsr.gamedb.ui.detail.DetailActivity
-import id.hanifsr.gamedb.ui.main.GameRVAdapter
 import id.hanifsr.gamedb.util.OnSnapPositionChangeListener
 import id.hanifsr.gamedb.util.SnapOnScrollListener
 import id.hanifsr.gamedb.util.attachSnapHelperWithListener

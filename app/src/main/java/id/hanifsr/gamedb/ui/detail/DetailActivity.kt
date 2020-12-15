@@ -3,10 +3,13 @@ package id.hanifsr.gamedb.ui.detail
 import android.os.Bundle
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_LEGACY
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.like.LikeButton
+import com.like.OnLikeListener
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
 import kotlinx.android.synthetic.main.activity_detail.*
@@ -37,6 +40,16 @@ class DetailActivity : AppCompatActivity() {
 		detailViewModel.getDetail(id).observe(this, {
 			if (it != null) {
 				gameDetailFetched(it)
+			}
+		})
+
+		lb_detail_favourite.setOnLikeListener(object : OnLikeListener {
+			override fun liked(likeButton: LikeButton?) {
+				Toast.makeText(this@DetailActivity, "Liked", Toast.LENGTH_SHORT).show()
+			}
+
+			override fun unLiked(likeButton: LikeButton?) {
+				Toast.makeText(this@DetailActivity, "Disliked", Toast.LENGTH_SHORT).show()
 			}
 		})
 	}

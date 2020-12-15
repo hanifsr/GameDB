@@ -15,20 +15,19 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:queryHint="@string/title_search" />
+		app:queryHint="@string/try_search_a_game" />
 
-	<TextView
-		android:id="@+id/tv_search"
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/rv_search"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="8dp"
-		android:layout_marginTop="8dp"
-		android:layout_marginEnd="8dp"
-		android:textAlignment="center"
-		android:textSize="20sp"
+		android:layout_height="0dp"
+		android:clipToPadding="false"
+		android:paddingTop="6dp"
+		android:paddingBottom="6dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@id/sv_search" />
+		app:layout_constraintTop_toBottomOf="@id/sv_search"
+		tools:listitem="@layout/item_search" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
