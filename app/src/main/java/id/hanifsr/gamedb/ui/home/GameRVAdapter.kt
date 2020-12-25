@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
-import kotlinx.android.synthetic.main.item_games.view.*
+import id.hanifsr.gamedb.databinding.ItemGamesHorizontalBinding
 
 class GameRVAdapter(
 	private var games: List<Game>,
@@ -23,7 +23,7 @@ class GameRVAdapter(
 		val view =
 			LayoutInflater
 				.from(parent.context)
-				.inflate(R.layout.item_games, parent, false)
+				.inflate(R.layout.item_games_horizontal, parent, false)
 		return GameRVHolder(view)
 	}
 
@@ -36,16 +36,15 @@ class GameRVAdapter(
 	}
 
 	inner class GameRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+		private var binding = ItemGamesHorizontalBinding.bind(itemView)
 		fun bind(game: Game, position: Int) {
-			with(itemView) {
-				Glide.with(itemView.context)
-					.load(game.background_image)
-					.into(iv_poster)
+			Glide.with(itemView.context)
+				.load(game.background_image)
+				.into(binding.ivPoster)
 
-				tv_item_number.text = (position + 1).toString()
+			binding.tvItemNumber.text = (position + 1).toString()
 
-				itemView.setOnClickListener { onItemClick.invoke(game) }
-			}
+			itemView.setOnClickListener { onItemClick.invoke(game) }
 		}
 	}
 }

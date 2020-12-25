@@ -26,6 +26,6 @@ class HomeViewModel : ViewModel() {
 	}
 
 	private fun onPopularGamesFailed() {
-		Log.i("HomeViewModel", "onError: Home Fragment ViewModel")
+		Log.i("GameDBLog", "onError: HomeViewModel")
 	}
 }

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Genre
-import kotlinx.android.synthetic.main.item_genre.view.*
+import id.hanifsr.gamedb.databinding.ItemGenreBinding
 
 class GenreRVAdapter(
 	private var genre: List<Genre>
@@ -33,10 +33,9 @@ class GenreRVAdapter(
 	}
 
 	inner class GenreRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+		private val binding = ItemGenreBinding.bind(itemView)
 		fun bind(genre: Genre) {
-			with(itemView) {
-				tv_item_genre.text = genre.name
-			}
+			binding.tvItemGenre.text = genre.name
 		}
 	}
 }

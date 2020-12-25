@@ -31,6 +31,6 @@ class SearchViewModel : ViewModel() {
 	}
 
 	private fun onSearchGamesFailed() {
-		Log.i("SearchViewModel", "onSearchGameFailed: Search Fragment ViewModel")
+		Log.i("GameDBLog", "onSearchGameFailed: SearchViewModel")
 	}
 }

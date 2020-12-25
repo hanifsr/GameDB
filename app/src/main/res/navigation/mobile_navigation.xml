@@ -18,7 +18,7 @@
 
 	<fragment
 		android:id="@+id/navigation_favourites"
-		android:name="id.hanifsr.gamedb.ui.favourite.FavouritesFragment"
+		android:name="id.hanifsr.gamedb.ui.favourites.FavouritesFragment"
 		android:label="@string/title_favourites"
 		tools:layout="@layout/fragment_favourites" />
 </navigation>

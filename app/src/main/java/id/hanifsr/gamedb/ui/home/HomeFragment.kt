@@ -5,22 +5,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
+import id.hanifsr.gamedb.databinding.FragmentHomeBinding
 import id.hanifsr.gamedb.ui.detail.DetailActivity
 import id.hanifsr.gamedb.util.OnSnapPositionChangeListener
 import id.hanifsr.gamedb.util.SnapOnScrollListener
 import id.hanifsr.gamedb.util.attachSnapHelperWithListener
-import kotlinx.android.synthetic.main.fragment_home.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class HomeFragment : Fragment() {
 
+	private var _binding: FragmentHomeBinding? = null
+	private val binding get() = _binding!!
 	private lateinit var adapter: GameRVAdapter
 	private lateinit var homeViewModel: HomeViewModel
 
@@ -31,12 +33,14 @@ class HomeFragment : Fragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		return inflater.inflate(R.layout.fragment_home, container, false)
+		_binding = FragmentHomeBinding.inflate(inflater, container, false)
+		return binding.root
 	}
 
 	override fun onActivityCreated(savedInstanceState: Bundle?) {
 		super.onActivityCreated(savedInstanceState)
 		if (activity != null) {
+			showMark(true)
 			showRecyclerView()
 
 			homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -48,25 +52,41 @@ class HomeFragment : Fragment() {
 		}
 	}
 
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
+		if (data != null) {
+			if (requestCode == DetailActivity.REQUEST_DELETE && resultCode == DetailActivity.RESULT_DELETE) {
+				val name = data.getStringExtra(DetailActivity.EXTRA_NAME)
+				Toast.makeText(activity, "$name deleted from Favourites!", Toast.LENGTH_SHORT)
+					.show()
+			}
+		}
+	}
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		_binding = null
+	}
+
 	private fun showRecyclerView() {
-		rv_games.setHasFixedSize(true)
-		rv_games.layoutManager =
+		binding.rvGames.setHasFixedSize(true)
+		binding.rvGames.layoutManager =
 			LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
 		adapter = GameRVAdapter(listOf()) { game -> showSelectedGame(game) }
-		rv_games.adapter = adapter
+		binding.rvGames.adapter = adapter
 
 		val snapHelper = PagerSnapHelper()
-		rv_games.attachSnapHelperWithListener(snapHelper,
+		binding.rvGames.attachSnapHelperWithListener(snapHelper,
 			SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
 			object : OnSnapPositionChangeListener {
 				override fun onSnapPositionChange(position: Int) {
-					tv_title.text = games[position].name
+					binding.tvTitle.text = games[position].name
 
 					val genreList = mutableListOf<String>()
 					for (genre in games[position].genres) {
 						genreList.add(genre.name)
 					}
-					tv_genre.text = genreList.joinToString()
+					binding.tvGenre.text = genreList.joinToString()
 				}
 			})
 	}
@@ -74,7 +94,7 @@ class HomeFragment : Fragment() {
 	private fun showSelectedGame(game: Game) {
 		val intent = Intent(activity, DetailActivity::class.java)
 		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
-		startActivity(intent)
+		startActivityForResult(intent, DetailActivity.REQUEST_DELETE)
 	}
 
 	private fun getDates(): String {
@@ -90,5 +110,18 @@ class HomeFragment : Fragment() {
 	private fun onPopularGamesFetched(games: List<Game>) {
 		adapter.updateGames(games)
 		this.games = games
+		showMark(false)
+	}
+
+	private fun showMark(state: Boolean) {
+		if (state) {
+			binding.pbHome.visibility = View.VISIBLE
+			binding.tvPopular.visibility = View.GONE
+			binding.tvThisMonth.visibility = View.GONE
+		} else {
+			binding.pbHome.visibility = View.GONE
+			binding.tvPopular.visibility = View.VISIBLE
+			binding.tvThisMonth.visibility = View.VISIBLE
+		}
 	}
 }

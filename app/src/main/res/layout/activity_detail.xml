@@ -11,6 +11,16 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
+		<ProgressBar
+			android:id="@+id/pb_detail"
+			style="?android:attr/progressBarStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+
 		<androidx.constraintlayout.widget.Guideline
 			android:id="@+id/guideline"
 			android:layout_width="wrap_content"
@@ -73,31 +83,59 @@
 			tools:listitem="@layout/item_genre" />
 
 		<TextView
-			android:id="@+id/tv_detail_released"
+			android:id="@+id/tv_detail_released_text"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
 			android:layout_marginTop="8dp"
 			android:layout_marginEnd="8dp"
+			android:text="@string/released"
+			android:textAlignment="center"
+			android:textSize="14sp"
+			android:textStyle="bold"
+			app:layout_constraintEnd_toStartOf="@id/guideline"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
+
+		<TextView
+			android:id="@+id/tv_detail_released"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginEnd="8dp"
 			android:textAlignment="center"
 			android:textSize="14sp"
 			app:layout_constraintEnd_toStartOf="@id/guideline"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre"
+			app:layout_constraintTop_toBottomOf="@id/tv_detail_released_text"
 			tools:text="@string/released" />
+
+		<TextView
+			android:id="@+id/tv_detail_publisher_text"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="8dp"
+			android:layout_marginEnd="8dp"
+			android:text="@string/publisher"
+			android:textAlignment="center"
+			android:textSize="14sp"
+			android:textStyle="bold"
+			app:layout_constraintEnd_toStartOf="@id/guideline2"
+			app:layout_constraintStart_toEndOf="@id/guideline"
+			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
 
 		<TextView
 			android:id="@+id/tv_detail_publisher"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
-			android:layout_marginTop="8dp"
 			android:layout_marginEnd="8dp"
 			android:textAlignment="center"
 			android:textSize="14sp"
 			app:layout_constraintEnd_toStartOf="@id/guideline2"
 			app:layout_constraintStart_toEndOf="@id/guideline"
-			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre"
+			app:layout_constraintTop_toBottomOf="@id/tv_detail_publisher_text"
 			tools:text="@string/publisher" />
 
 		<com.like.LikeButton

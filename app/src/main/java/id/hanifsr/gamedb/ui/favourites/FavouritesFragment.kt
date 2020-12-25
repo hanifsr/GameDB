@@ -1,4 +1,4 @@
-package id.hanifsr.gamedb.ui.search
+package id.hanifsr.gamedb.ui.favourites
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,27 +6,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import id.hanifsr.gamedb.data.model.Game
-import id.hanifsr.gamedb.databinding.FragmentSearchBinding
+import id.hanifsr.gamedb.databinding.FragmentFavouritesBinding
 import id.hanifsr.gamedb.ui.detail.DetailActivity
 
-class SearchFragment : Fragment() {
+class FavouritesFragment : Fragment() {
 
-	private var _binding: FragmentSearchBinding? = null
+	private var _binding: FragmentFavouritesBinding? = null
 	private val binding get() = _binding!!
-	private lateinit var adapter: SearchRVAdapter
-	private lateinit var searchViewModel: SearchViewModel
+	private lateinit var adapter: FavouritesRVAdapter
+	private lateinit var favouritesViewModel: FavouritesViewModel
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		_binding = FragmentSearchBinding.inflate(inflater, container, false)
+		_binding = FragmentFavouritesBinding.inflate(inflater, container, false)
 		return binding.root
 	}
 
@@ -36,28 +35,11 @@ class SearchFragment : Fragment() {
 			showMark(true)
 			showRecyclerView()
 
-			searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
-			searchViewModel.searchGames().observe(viewLifecycleOwner, {
+			favouritesViewModel = ViewModelProvider(this).get(FavouritesViewModel::class.java)
+			favouritesViewModel.favouriteGames().observe(viewLifecycleOwner, {
 				if (it != null) {
-					onSearchGamesFetched(it)
+					onFavouriteGamesFetched(it)
 				}
-			})
-
-			binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-				override fun onQueryTextSubmit(query: String?): Boolean {
-					if (query != null) {
-						searchViewModel.keyword = query
-					}
-					return true
-				}
-
-				override fun onQueryTextChange(newText: String?): Boolean {
-					if (newText?.isEmpty() == true) {
-						searchViewModel.keyword = ""
-					}
-					return true
-				}
-
 			})
 		}
 	}
@@ -66,9 +48,14 @@ class SearchFragment : Fragment() {
 		super.onActivityResult(requestCode, resultCode, data)
 		if (data != null) {
 			if (requestCode == DetailActivity.REQUEST_DELETE && resultCode == DetailActivity.RESULT_DELETE) {
+				val position = data.getIntExtra(DetailActivity.EXTRA_POSITION, -1)
 				val name = data.getStringExtra(DetailActivity.EXTRA_NAME)
+				adapter.removeItem(position)
 				Toast.makeText(activity, "$name deleted from Favourites!", Toast.LENGTH_SHORT)
 					.show()
+				if (adapter.itemCount == 0) {
+					binding.tvFavouritesText.visibility = View.VISIBLE
+				}
 			}
 		}
 	}
@@ -79,30 +66,39 @@ class SearchFragment : Fragment() {
 	}
 
 	private fun showRecyclerView() {
-		binding.rvSearch.setHasFixedSize(true)
-		binding.rvSearch.layoutManager = LinearLayoutManager(activity)
-		adapter = SearchRVAdapter(listOf()) { game -> showSelectedGame(game) }
-		binding.rvSearch.adapter = adapter
+		binding.rvFavourites.setHasFixedSize(true)
+		binding.rvFavourites.layoutManager = LinearLayoutManager(activity)
+		adapter = FavouritesRVAdapter(arrayListOf()) { game, position ->
+			showSelectedGame(
+				game,
+				position
+			)
+		}
+		binding.rvFavourites.adapter = adapter
 	}
 
-	private fun showSelectedGame(game: Game) {
+	private fun showSelectedGame(game: Game, position: Int) {
 		val intent = Intent(activity, DetailActivity::class.java)
 		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
+		intent.putExtra(DetailActivity.EXTRA_POSITION, position)
 		startActivityForResult(intent, DetailActivity.REQUEST_DELETE)
 	}
 
-	private fun onSearchGamesFetched(games: List<Game>) {
-		adapter.updateSearch(games)
+	private fun onFavouriteGamesFetched(games: List<Game>) {
+		adapter.updateFavouriteRVData(games)
 		showMark(false)
 	}
 
 	private fun showMark(state: Boolean) {
 		if (state) {
-			binding.pbSearch.visibility = View.VISIBLE
-			binding.svSearch.visibility = View.GONE
+			binding.pbFavourites.visibility = View.VISIBLE
 		} else {
-			binding.pbSearch.visibility = View.GONE
-			binding.svSearch.visibility = View.VISIBLE
+			binding.pbFavourites.visibility = View.GONE
+			if (adapter.itemCount > 0) {
+				binding.tvFavouritesText.visibility = View.GONE
+			} else {
+				binding.tvFavouritesText.visibility = View.VISIBLE
+			}
 		}
 	}
 }

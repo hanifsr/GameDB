@@ -7,11 +7,12 @@
 	<string name="logo">Logo</string>
 	<string name="popular">Popular</string>
 	<string name="most_popular_games_this_month">Most popular games this month</string>
-	<string name="publisher">&lt;b>Publishers&lt;/b>&lt;br>%s</string>
+	<string name="publisher">Publishers</string>
 	<string name="description">Description</string>
-	<string name="released">&lt;b>Released on&lt;/b>&lt;br>%s</string>
+	<string name="released">Released on</string>
 	<string name="title_home">Home</string>
 	<string name="title_search">Search</string>
 	<string name="title_favourites">Favourites</string>
 	<string name="try_search_a_game">Try search a game!</string>
+	<string name="try_add_a_game_to_favourites">Try add a game to Favourites!</string>
 </resources>

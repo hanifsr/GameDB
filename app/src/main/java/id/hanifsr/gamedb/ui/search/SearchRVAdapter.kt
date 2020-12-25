@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.data.model.Game
-import kotlinx.android.synthetic.main.item_search.view.*
+import id.hanifsr.gamedb.databinding.ItemGamesVerticalBinding
 
 class SearchRVAdapter(
 	private var games: List<Game>,
@@ -22,7 +22,7 @@ class SearchRVAdapter(
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchRVHolder {
 		val view = LayoutInflater
 			.from(parent.context)
-			.inflate(R.layout.item_search, parent, false)
+			.inflate(R.layout.item_games_vertical, parent, false)
 		return SearchRVHolder(view)
 	}
 
@@ -35,16 +35,15 @@ class SearchRVAdapter(
 	}
 
 	inner class SearchRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+		private val binding = ItemGamesVerticalBinding.bind(itemView)
 		fun bind(game: Game) {
-			with(itemView) {
-				Glide.with(itemView.context)
-					.load(game.background_image)
-					.into(iv_search_banner)
+			Glide.with(itemView.context)
+				.load(game.background_image)
+				.into(binding.ivSearchBanner)
 
-				tv_search_title.text = game.name
+			binding.tvSearchTitle.text = game.name
 
-				itemView.setOnClickListener { onItemClick.invoke(game) }
-			}
+			itemView.setOnClickListener { onItemClick.invoke(game) }
 		}
 	}
 }
