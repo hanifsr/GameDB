@@ -1,6 +1,5 @@
 package id.hanifsr.gamedb.ui.detail
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -10,9 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.like.LikeButton
 import com.like.OnLikeListener
-import id.hanifsr.gamedb.data.model.Game
+import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.ActivityDetailBinding
-import java.text.SimpleDateFormat
+import id.hanifsr.gamedb.util.MappingHelper
+import id.hanifsr.gamedb.viewmodel.ViewModelFactory
 import java.util.*
 
 class DetailActivity : AppCompatActivity() {
@@ -25,16 +25,15 @@ class DetailActivity : AppCompatActivity() {
 		const val RESULT_DELETE = 201
 	}
 
-	private lateinit var binding: ActivityDetailBinding
-	private lateinit var adapter: GenreRVAdapter
+	private lateinit var activityDetailBinding: ActivityDetailBinding
+	private lateinit var genreRVAdapter: GenreRVAdapter
 	private lateinit var detailViewModel: DetailViewModel
-	private lateinit var game: Game
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		binding = ActivityDetailBinding.inflate(layoutInflater)
-		val view = binding.root
-		setContentView(view)
+//		activityDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail)
+		activityDetailBinding = ActivityDetailBinding.inflate(layoutInflater)
+		setContentView(activityDetailBinding.root)
 
 		showMark(true)
 
@@ -43,86 +42,57 @@ class DetailActivity : AppCompatActivity() {
 
 		showRecyclerViewGenre()
 
-		detailViewModel = ViewModelProvider(
-			this,
-			ViewModelProvider.NewInstanceFactory()
-		).get(DetailViewModel::class.java)
+		val factory = ViewModelFactory.getInstance(this)
+		detailViewModel = ViewModelProvider(this, factory).get(DetailViewModel::class.java)
 		detailViewModel.getDetail(id).observe(this, {
 			if (it != null) {
-				game = it
 				gameDetailFetched(it)
 			}
 		})
 
-		detailViewModel.isFavourite().observe(this, {
-			binding.lbDetailFavourite.isLiked = it
-		})
-
-		binding.lbDetailFavourite.setOnLikeListener(object : OnLikeListener {
+		activityDetailBinding.lbDetailFavourite.setOnLikeListener(object : OnLikeListener {
 			override fun liked(likeButton: LikeButton?) {
-				val result = detailViewModel.insertToFavourite(game)
-				if (result != null && result > 0) {
-					Toast.makeText(
-						this@DetailActivity,
-						"${game.name} is added to Favourites!",
-						Toast.LENGTH_SHORT
-					).show()
-				} else {
-					Toast.makeText(
-						this@DetailActivity,
-						"Failed adding ${game.name} to Favourites!",
-						Toast.LENGTH_SHORT
-					).show()
-				}
+				Toast.makeText(
+					this@DetailActivity,
+					"Liked",
+					Toast.LENGTH_SHORT
+				).show()
 			}
 
 			override fun unLiked(likeButton: LikeButton?) {
-				val result = detailViewModel.deleteFromFavourite(id)
-				if (result != null && result > 0) {
-					val intent = Intent()
-					intent.putExtra(EXTRA_POSITION, position)
-					intent.putExtra(EXTRA_NAME, game.name)
-					setResult(RESULT_DELETE, intent)
-					finish()
-				} else {
-					Toast.makeText(
-						this@DetailActivity,
-						"Failed deleting ${game.name} from Favourites!",
-						Toast.LENGTH_SHORT
-					).show()
-				}
+				Toast.makeText(
+					this@DetailActivity,
+					"Disliked",
+					Toast.LENGTH_SHORT
+				).show()
 			}
 		})
 	}
 
 	private fun showRecyclerViewGenre() {
-		binding.rvDetailGenre.setHasFixedSize(true)
-		binding.rvDetailGenre.layoutManager =
+		activityDetailBinding.rvDetailGenre.setHasFixedSize(true)
+		activityDetailBinding.rvDetailGenre.layoutManager =
 			LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-		adapter = GenreRVAdapter(listOf())
-		binding.rvDetailGenre.adapter = adapter
+		genreRVAdapter = GenreRVAdapter(emptyList())
+		activityDetailBinding.rvDetailGenre.adapter = genreRVAdapter
 	}
 
-	private fun gameDetailFetched(game: Game) {
+	private fun gameDetailFetched(gameEntity: GameEntity) {
 		Glide.with(this)
-			.load(game.background_image)
-			.into(binding.ivDetailBanner)
+			.load(gameEntity.backgroundImage)
+			.into(activityDetailBinding.ivDetailBanner)
 
-		binding.tvDetailTitle.text = game.name
+		activityDetailBinding.tvDetailTitle.text = gameEntity.name
 
-		adapter.updateGenre(game.genres)
+		genreRVAdapter.updateGenre(gameEntity.genres.split(", "))
 
-		binding.tvDetailReleased.text = dateFormat(game.released)
+		activityDetailBinding.tvDetailReleased.text = MappingHelper.dateFormat(gameEntity.released)
 
-		val publisherList = mutableListOf<String>()
-		for (publisher in game.publishers) {
-			publisherList.add(publisher.name)
-		}
-		binding.tvDetailPublisher.text = publisherList.joinToString()
+		activityDetailBinding.tvDetailDevelopers.text = gameEntity.developers
 
-		binding.tvDetailDescription.text = game.description_raw
+		activityDetailBinding.tvDetailDescription.text = gameEntity.description
 
-		setTitleActionBar(game.name)
+		setTitleActionBar(gameEntity.name)
 
 		showMark(false)
 	}
@@ -133,30 +103,17 @@ class DetailActivity : AppCompatActivity() {
 		supportActionBar?.elevation = 0F
 	}
 
-	private fun dateFormat(unformattedDate: String?): String {
-		return if (unformattedDate == null) {
-			"TBA"
-		} else {
-			val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(unformattedDate)
-			if (date == null) {
-				"TBA"
-			} else {
-				SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date)
-			}
-		}
-	}
-
 	private fun showMark(state: Boolean) {
 		if (state) {
-			binding.pbDetail.visibility = View.VISIBLE
-			binding.tvDetailReleasedText.visibility = View.GONE
-			binding.tvDetailPublisherText.visibility = View.GONE
-			binding.lbDetailFavourite.visibility = View.GONE
+			activityDetailBinding.pbDetail.visibility = View.VISIBLE
+			activityDetailBinding.tvDetailReleasedText.visibility = View.GONE
+			activityDetailBinding.tvDetailDevelopersText.visibility = View.GONE
+			activityDetailBinding.lbDetailFavourite.visibility = View.GONE
 		} else {
-			binding.pbDetail.visibility = View.GONE
-			binding.tvDetailReleasedText.visibility = View.VISIBLE
-			binding.tvDetailPublisherText.visibility = View.VISIBLE
-			binding.lbDetailFavourite.visibility = View.VISIBLE
+			activityDetailBinding.pbDetail.visibility = View.GONE
+			activityDetailBinding.tvDetailReleasedText.visibility = View.VISIBLE
+			activityDetailBinding.tvDetailDevelopersText.visibility = View.VISIBLE
+			activityDetailBinding.lbDetailFavourite.visibility = View.VISIBLE
 		}
 	}
 }

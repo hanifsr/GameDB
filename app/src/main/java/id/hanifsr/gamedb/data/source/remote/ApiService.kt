@@ -1,13 +1,13 @@
 package id.hanifsr.gamedb.data.source.remote
 
-import id.hanifsr.gamedb.data.model.Game
-import id.hanifsr.gamedb.data.model.GamesResponse
+import id.hanifsr.gamedb.data.source.remote.response.GameDetailResponse
+import id.hanifsr.gamedb.data.source.remote.response.GameListResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface RAWGApi {
+interface ApiService {
 
 	@GET("games")
 	fun getPopularGames(
@@ -16,18 +16,18 @@ interface RAWGApi {
 		@Query("page_size") pageSize: Int,
 		@Query("dates") dates: String,
 		@Query("ordering") ordering: String,
-	): Call<GamesResponse>
+	): Call<GameListResponse>
 
 	@GET("games/{id}")
 	fun getGameDetail(
 		@Path("id") id: Int,
 		@Query("key") apiKey: String
-	): Call<Game>
+	): Call<GameDetailResponse>
 
 	@GET("games")
 	fun searchGames(
 		@Query("key") apiKey: String,
 		@Query("search") keyword: String,
 		@Query("ordering") ordering: String
-	): Call<GamesResponse>
+	): Call<GameListResponse>
 }

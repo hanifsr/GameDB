@@ -1,4 +1,4 @@
-package id.hanifsr.gamedb.util
+package id.hanifsr.gamedb.util.recyclerview
 
 interface OnSnapPositionChangeListener {
 	fun onSnapPositionChange(position: Int)

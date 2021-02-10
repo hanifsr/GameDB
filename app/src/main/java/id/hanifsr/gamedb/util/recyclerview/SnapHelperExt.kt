@@ -1,4 +1,4 @@
-package id.hanifsr.gamedb.util
+package id.hanifsr.gamedb.util.recyclerview
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper

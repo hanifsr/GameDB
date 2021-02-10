@@ -5,15 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import id.hanifsr.gamedb.R
-import id.hanifsr.gamedb.data.model.Genre
 import id.hanifsr.gamedb.databinding.ItemGenreBinding
 
 class GenreRVAdapter(
-	private var genre: List<Genre>
+	private var genres: List<String>
 ) : RecyclerView.Adapter<GenreRVAdapter.GenreRVHolder>() {
 
-	fun updateGenre(genre: List<Genre>) {
-		this.genre = genre
+	fun updateGenre(genres: List<String>) {
+		this.genres = genres
 		notifyDataSetChanged()
 	}
 
@@ -25,17 +24,17 @@ class GenreRVAdapter(
 	}
 
 	override fun onBindViewHolder(holder: GenreRVHolder, position: Int) {
-		holder.bind(genre[position])
+		holder.bind(genres[position])
 	}
 
 	override fun getItemCount(): Int {
-		return genre.size
+		return genres.size
 	}
 
 	inner class GenreRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 		private val binding = ItemGenreBinding.bind(itemView)
-		fun bind(genre: Genre) {
-			binding.tvItemGenre.text = genre.name
+		fun bind(genre: String) {
+			binding.tvItemGenre.text = genre
 		}
 	}
 }

@@ -10,41 +10,43 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import id.hanifsr.gamedb.data.model.Game
+import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.FragmentHomeBinding
 import id.hanifsr.gamedb.ui.detail.DetailActivity
-import id.hanifsr.gamedb.util.OnSnapPositionChangeListener
-import id.hanifsr.gamedb.util.SnapOnScrollListener
-import id.hanifsr.gamedb.util.attachSnapHelperWithListener
-import java.text.SimpleDateFormat
-import java.util.*
+import id.hanifsr.gamedb.util.recyclerview.OnSnapPositionChangeListener
+import id.hanifsr.gamedb.util.recyclerview.SnapOnScrollListener
+import id.hanifsr.gamedb.util.recyclerview.attachSnapHelperWithListener
+import id.hanifsr.gamedb.viewmodel.ViewModelFactory
 
 class HomeFragment : Fragment() {
 
-	private var _binding: FragmentHomeBinding? = null
-	private val binding get() = _binding!!
-	private lateinit var adapter: GameRVAdapter
+	private var _fragmentHomeBinding: FragmentHomeBinding? = null
+	private val fragmentHomeBinding get() = _fragmentHomeBinding!!
+	private lateinit var homeRVAdapter: HomeRVAdapter
 	private lateinit var homeViewModel: HomeViewModel
 
-	private var games: List<Game> = listOf()
+	private var gameEntities: List<GameEntity> = emptyList()
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		_binding = FragmentHomeBinding.inflate(inflater, container, false)
-		return binding.root
+		/*fragmentHomeBinding =
+			DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)*/
+		_fragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
+		return fragmentHomeBinding.root
 	}
 
-	override fun onActivityCreated(savedInstanceState: Bundle?) {
-		super.onActivityCreated(savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 		if (activity != null) {
 			showMark(true)
 			showRecyclerView()
 
-			homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-			homeViewModel.getGames(getDates()).observe(viewLifecycleOwner, {
+			val factory = ViewModelFactory.getInstance(requireActivity())
+			homeViewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
+			homeViewModel.popularGames.observe(viewLifecycleOwner, {
 				if (it != null) {
 					onPopularGamesFetched(it)
 				}
@@ -65,63 +67,48 @@ class HomeFragment : Fragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		_binding = null
+		_fragmentHomeBinding = null
 	}
 
 	private fun showRecyclerView() {
-		binding.rvGames.setHasFixedSize(true)
-		binding.rvGames.layoutManager =
+		fragmentHomeBinding.rvGames.setHasFixedSize(true)
+		fragmentHomeBinding.rvGames.layoutManager =
 			LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-		adapter = GameRVAdapter(listOf()) { game -> showSelectedGame(game) }
-		binding.rvGames.adapter = adapter
+		homeRVAdapter = HomeRVAdapter(emptyList()) { gameEntity -> showSelectedGame(gameEntity) }
+		fragmentHomeBinding.rvGames.adapter = homeRVAdapter
 
 		val snapHelper = PagerSnapHelper()
-		binding.rvGames.attachSnapHelperWithListener(snapHelper,
+		fragmentHomeBinding.rvGames.attachSnapHelperWithListener(snapHelper,
 			SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
 			object : OnSnapPositionChangeListener {
 				override fun onSnapPositionChange(position: Int) {
-					binding.tvTitle.text = games[position].name
-
-					val genreList = mutableListOf<String>()
-					for (genre in games[position].genres) {
-						genreList.add(genre.name)
-					}
-					binding.tvGenre.text = genreList.joinToString()
+					fragmentHomeBinding.tvTitle.text = gameEntities[position].name
+					fragmentHomeBinding.tvGenre.text = gameEntities[position].genres
 				}
 			})
 	}
 
-	private fun showSelectedGame(game: Game) {
+	private fun showSelectedGame(gameEntity: GameEntity) {
 		val intent = Intent(activity, DetailActivity::class.java)
-		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
+		intent.putExtra(DetailActivity.EXTRA_ID, gameEntity.id)
 		startActivityForResult(intent, DetailActivity.REQUEST_DELETE)
 	}
 
-	private fun getDates(): String {
-		val calendar = Calendar.getInstance()
-		val year = calendar.get(Calendar.YEAR)
-		val month = calendar.get(Calendar.MONTH) + 1
-		val firstDay = "$year-$month-01"
-		val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-
-		return "$firstDay,$today"
-	}
-
-	private fun onPopularGamesFetched(games: List<Game>) {
-		adapter.updateGames(games)
-		this.games = games
+	private fun onPopularGamesFetched(gameEntities: List<GameEntity>) {
+		homeRVAdapter.updateGames(gameEntities)
+		this.gameEntities = gameEntities
 		showMark(false)
 	}
 
 	private fun showMark(state: Boolean) {
 		if (state) {
-			binding.pbHome.visibility = View.VISIBLE
-			binding.tvPopular.visibility = View.GONE
-			binding.tvThisMonth.visibility = View.GONE
+			fragmentHomeBinding.pbHome.visibility = View.VISIBLE
+			fragmentHomeBinding.tvPopular.visibility = View.GONE
+			fragmentHomeBinding.tvThisMonth.visibility = View.GONE
 		} else {
-			binding.pbHome.visibility = View.GONE
-			binding.tvPopular.visibility = View.VISIBLE
-			binding.tvThisMonth.visibility = View.VISIBLE
+			fragmentHomeBinding.pbHome.visibility = View.GONE
+			fragmentHomeBinding.tvPopular.visibility = View.VISIBLE
+			fragmentHomeBinding.tvThisMonth.visibility = View.VISIBLE
 		}
 	}
 }

@@ -9,15 +9,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import id.hanifsr.gamedb.data.model.Game
+import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.FragmentFavouritesBinding
 import id.hanifsr.gamedb.ui.detail.DetailActivity
+import id.hanifsr.gamedb.viewmodel.ViewModelFactory
 
 class FavouritesFragment : Fragment() {
 
-	private var _binding: FragmentFavouritesBinding? = null
-	private val binding get() = _binding!!
-	private lateinit var adapter: FavouritesRVAdapter
+	private var _fragmentFavouritesBinding: FragmentFavouritesBinding? = null
+	private val fragmentFavouritesBinding get() = _fragmentFavouritesBinding!!
+	private lateinit var favouritesRVAdapter: FavouritesRVAdapter
 	private lateinit var favouritesViewModel: FavouritesViewModel
 
 	override fun onCreateView(
@@ -25,18 +26,22 @@ class FavouritesFragment : Fragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		_binding = FragmentFavouritesBinding.inflate(inflater, container, false)
-		return binding.root
+		/*fragmentFavouritesBinding =
+			DataBindingUtil.inflate(inflater, R.layout.fragment_favourites, container, false)*/
+		_fragmentFavouritesBinding = FragmentFavouritesBinding.inflate(inflater, container, false)
+		return fragmentFavouritesBinding.root
 	}
 
-	override fun onActivityCreated(savedInstanceState: Bundle?) {
-		super.onActivityCreated(savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 		if (activity != null) {
 			showMark(true)
 			showRecyclerView()
 
-			favouritesViewModel = ViewModelProvider(this).get(FavouritesViewModel::class.java)
-			favouritesViewModel.favouriteGames().observe(viewLifecycleOwner, {
+			val factory = ViewModelFactory.getInstance(requireActivity())
+			favouritesViewModel =
+				ViewModelProvider(this, factory).get(FavouritesViewModel::class.java)
+			favouritesViewModel.favouriteGames.observe(viewLifecycleOwner, {
 				if (it != null) {
 					onFavouriteGamesFetched(it)
 				}
@@ -50,11 +55,11 @@ class FavouritesFragment : Fragment() {
 			if (requestCode == DetailActivity.REQUEST_DELETE && resultCode == DetailActivity.RESULT_DELETE) {
 				val position = data.getIntExtra(DetailActivity.EXTRA_POSITION, -1)
 				val name = data.getStringExtra(DetailActivity.EXTRA_NAME)
-				adapter.removeItem(position)
+				favouritesRVAdapter.removeItem(position)
 				Toast.makeText(activity, "$name deleted from Favourites!", Toast.LENGTH_SHORT)
 					.show()
-				if (adapter.itemCount == 0) {
-					binding.tvFavouritesText.visibility = View.VISIBLE
+				if (favouritesRVAdapter.itemCount == 0) {
+					fragmentFavouritesBinding.tvFavouritesText.visibility = View.VISIBLE
 				}
 			}
 		}
@@ -62,42 +67,42 @@ class FavouritesFragment : Fragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		_binding = null
+		_fragmentFavouritesBinding = null
 	}
 
 	private fun showRecyclerView() {
-		binding.rvFavourites.setHasFixedSize(true)
-		binding.rvFavourites.layoutManager = LinearLayoutManager(activity)
-		adapter = FavouritesRVAdapter(arrayListOf()) { game, position ->
+		fragmentFavouritesBinding.rvFavourites.setHasFixedSize(true)
+		fragmentFavouritesBinding.rvFavourites.layoutManager = LinearLayoutManager(activity)
+		favouritesRVAdapter = FavouritesRVAdapter(mutableListOf()) { gameEntity, position ->
 			showSelectedGame(
-				game,
+				gameEntity,
 				position
 			)
 		}
-		binding.rvFavourites.adapter = adapter
+		fragmentFavouritesBinding.rvFavourites.adapter = favouritesRVAdapter
 	}
 
-	private fun showSelectedGame(game: Game, position: Int) {
+	private fun showSelectedGame(gameEntity: GameEntity, position: Int) {
 		val intent = Intent(activity, DetailActivity::class.java)
-		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
+		intent.putExtra(DetailActivity.EXTRA_ID, gameEntity.id)
 		intent.putExtra(DetailActivity.EXTRA_POSITION, position)
 		startActivityForResult(intent, DetailActivity.REQUEST_DELETE)
 	}
 
-	private fun onFavouriteGamesFetched(games: List<Game>) {
-		adapter.updateFavouriteRVData(games)
+	private fun onFavouriteGamesFetched(gameEntities: List<GameEntity>) {
+		favouritesRVAdapter.updateFavouriteRVData(gameEntities)
 		showMark(false)
 	}
 
 	private fun showMark(state: Boolean) {
 		if (state) {
-			binding.pbFavourites.visibility = View.VISIBLE
+			fragmentFavouritesBinding.pbFavourites.visibility = View.VISIBLE
 		} else {
-			binding.pbFavourites.visibility = View.GONE
-			if (adapter.itemCount > 0) {
-				binding.tvFavouritesText.visibility = View.GONE
+			fragmentFavouritesBinding.pbFavourites.visibility = View.GONE
+			if (favouritesRVAdapter.itemCount > 0) {
+				fragmentFavouritesBinding.tvFavouritesText.visibility = View.GONE
 			} else {
-				binding.tvFavouritesText.visibility = View.VISIBLE
+				fragmentFavouritesBinding.tvFavouritesText.visibility = View.VISIBLE
 			}
 		}
 	}

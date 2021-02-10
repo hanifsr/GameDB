@@ -6,16 +6,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import id.hanifsr.gamedb.R
-import id.hanifsr.gamedb.data.model.Game
+import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.ItemGamesVerticalBinding
 
 class SearchRVAdapter(
-	private var games: List<Game>,
-	private val onItemClick: (game: Game) -> Unit
+	private var gameEntities: List<GameEntity>,
+	private val onItemClick: (gameEntity: GameEntity) -> Unit
 ) : RecyclerView.Adapter<SearchRVAdapter.SearchRVHolder>() {
 
-	fun updateSearch(games: List<Game>) {
-		this.games = games
+	fun updateSearch(gameEntities: List<GameEntity>) {
+		this.gameEntities = gameEntities
 		notifyDataSetChanged()
 	}
 
@@ -27,23 +27,23 @@ class SearchRVAdapter(
 	}
 
 	override fun onBindViewHolder(holder: SearchRVHolder, position: Int) {
-		holder.bind(games[position])
+		holder.bind(gameEntities[position])
 	}
 
 	override fun getItemCount(): Int {
-		return games.size
+		return gameEntities.size
 	}
 
 	inner class SearchRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 		private val binding = ItemGamesVerticalBinding.bind(itemView)
-		fun bind(game: Game) {
+		fun bind(gameEntity: GameEntity) {
 			Glide.with(itemView.context)
-				.load(game.background_image)
+				.load(gameEntity.backgroundImage)
 				.into(binding.ivSearchBanner)
 
-			binding.tvSearchTitle.text = game.name
+			binding.tvSearchTitle.text = gameEntity.name
 
-			itemView.setOnClickListener { onItemClick.invoke(game) }
+			itemView.setOnClickListener { onItemClick.invoke(gameEntity) }
 		}
 	}
 }

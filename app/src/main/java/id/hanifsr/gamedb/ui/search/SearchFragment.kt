@@ -2,6 +2,7 @@ package id.hanifsr.gamedb.ui.search
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +11,16 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import id.hanifsr.gamedb.data.model.Game
+import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.FragmentSearchBinding
 import id.hanifsr.gamedb.ui.detail.DetailActivity
+import id.hanifsr.gamedb.viewmodel.ViewModelFactory
 
 class SearchFragment : Fragment() {
 
-	private var _binding: FragmentSearchBinding? = null
-	private val binding get() = _binding!!
-	private lateinit var adapter: SearchRVAdapter
+	private var _fragmentSearchBinding: FragmentSearchBinding? = null
+	private val fragmentSearchBinding get() = _fragmentSearchBinding!!
+	private lateinit var searchRVAdapter: SearchRVAdapter
 	private lateinit var searchViewModel: SearchViewModel
 
 	override fun onCreateView(
@@ -26,34 +28,38 @@ class SearchFragment : Fragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		_binding = FragmentSearchBinding.inflate(inflater, container, false)
-		return binding.root
+		/*fragmentSearchBinding =
+			DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)*/
+		_fragmentSearchBinding = FragmentSearchBinding.inflate(inflater, container, false)
+		return fragmentSearchBinding.root
 	}
 
-	override fun onActivityCreated(savedInstanceState: Bundle?) {
-		super.onActivityCreated(savedInstanceState)
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 		if (activity != null) {
 			showMark(true)
 			showRecyclerView()
 
-			searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
-			searchViewModel.searchGames().observe(viewLifecycleOwner, {
+			val factory = ViewModelFactory.getInstance(requireActivity())
+			searchViewModel = ViewModelProvider(this, factory).get(SearchViewModel::class.java)
+			searchViewModel.searchGames.observe(viewLifecycleOwner, {
 				if (it != null) {
 					onSearchGamesFetched(it)
 				}
 			})
 
-			binding.svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+			fragmentSearchBinding.svSearch.setOnQueryTextListener(object :
+				SearchView.OnQueryTextListener {
 				override fun onQueryTextSubmit(query: String?): Boolean {
 					if (query != null) {
-						searchViewModel.keyword = query
+						searchViewModel.keyword.postValue(query)
 					}
 					return true
 				}
 
 				override fun onQueryTextChange(newText: String?): Boolean {
 					if (newText?.isEmpty() == true) {
-						searchViewModel.keyword = ""
+						searchViewModel.keyword.postValue("")
 					}
 					return true
 				}
@@ -75,34 +81,35 @@ class SearchFragment : Fragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		_binding = null
+		_fragmentSearchBinding = null
 	}
 
 	private fun showRecyclerView() {
-		binding.rvSearch.setHasFixedSize(true)
-		binding.rvSearch.layoutManager = LinearLayoutManager(activity)
-		adapter = SearchRVAdapter(listOf()) { game -> showSelectedGame(game) }
-		binding.rvSearch.adapter = adapter
+		fragmentSearchBinding.rvSearch.setHasFixedSize(true)
+		fragmentSearchBinding.rvSearch.layoutManager = LinearLayoutManager(activity)
+		searchRVAdapter =
+			SearchRVAdapter(emptyList()) { gameEntity -> showSelectedGame(gameEntity) }
+		fragmentSearchBinding.rvSearch.adapter = searchRVAdapter
 	}
 
-	private fun showSelectedGame(game: Game) {
+	private fun showSelectedGame(gameEntity: GameEntity) {
 		val intent = Intent(activity, DetailActivity::class.java)
-		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
+		intent.putExtra(DetailActivity.EXTRA_ID, gameEntity.id)
 		startActivityForResult(intent, DetailActivity.REQUEST_DELETE)
 	}
 
-	private fun onSearchGamesFetched(games: List<Game>) {
-		adapter.updateSearch(games)
+	private fun onSearchGamesFetched(gameEntities: List<GameEntity>) {
+		searchRVAdapter.updateSearch(gameEntities)
 		showMark(false)
 	}
 
 	private fun showMark(state: Boolean) {
 		if (state) {
-			binding.pbSearch.visibility = View.VISIBLE
-			binding.svSearch.visibility = View.GONE
+			fragmentSearchBinding.pbSearch.visibility = View.VISIBLE
+			fragmentSearchBinding.svSearch.visibility = View.GONE
 		} else {
-			binding.pbSearch.visibility = View.GONE
-			binding.svSearch.visibility = View.VISIBLE
+			fragmentSearchBinding.pbSearch.visibility = View.GONE
+			fragmentSearchBinding.svSearch.visibility = View.VISIBLE
 		}
 	}
 }

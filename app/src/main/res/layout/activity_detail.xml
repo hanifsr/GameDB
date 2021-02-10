@@ -40,7 +40,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			app:barrierDirection="bottom"
-			app:constraint_referenced_ids="tv_detail_released, tv_detail_publisher" />
+			app:constraint_referenced_ids="tv_detail_released, tv_detail_developers" />
 
 		<ImageView
 			android:id="@+id/iv_detail_banner"
@@ -111,13 +111,13 @@
 			tools:text="@string/released" />
 
 		<TextView
-			android:id="@+id/tv_detail_publisher_text"
+			android:id="@+id/tv_detail_developers_text"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
 			android:layout_marginTop="8dp"
 			android:layout_marginEnd="8dp"
-			android:text="@string/publisher"
+			android:text="@string/developers"
 			android:textAlignment="center"
 			android:textSize="14sp"
 			android:textStyle="bold"
@@ -126,7 +126,7 @@
 			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
 
 		<TextView
-			android:id="@+id/tv_detail_publisher"
+			android:id="@+id/tv_detail_developers"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
@@ -135,8 +135,8 @@
 			android:textSize="14sp"
 			app:layout_constraintEnd_toStartOf="@id/guideline2"
 			app:layout_constraintStart_toEndOf="@id/guideline"
-			app:layout_constraintTop_toBottomOf="@id/tv_detail_publisher_text"
-			tools:text="@string/publisher" />
+			app:layout_constraintTop_toBottomOf="@id/tv_detail_developers_text"
+			tools:text="@string/developers" />
 
 		<com.like.LikeButton
 			android:id="@+id/lb_detail_favourite"
