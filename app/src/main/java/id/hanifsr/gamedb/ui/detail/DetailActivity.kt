@@ -1,5 +1,6 @@
 package id.hanifsr.gamedb.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -28,6 +29,7 @@ class DetailActivity : AppCompatActivity() {
 	private lateinit var activityDetailBinding: ActivityDetailBinding
 	private lateinit var genreRVAdapter: GenreRVAdapter
 	private lateinit var detailViewModel: DetailViewModel
+	private lateinit var gameEntity: GameEntity
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -47,24 +49,45 @@ class DetailActivity : AppCompatActivity() {
 		detailViewModel.getDetail(id).observe(this, {
 			if (it != null) {
 				gameDetailFetched(it)
+				gameEntity = it
 			}
 		})
 
 		activityDetailBinding.lbDetailFavourite.setOnLikeListener(object : OnLikeListener {
 			override fun liked(likeButton: LikeButton?) {
-				Toast.makeText(
-					this@DetailActivity,
-					"Liked",
-					Toast.LENGTH_SHORT
-				).show()
+				detailViewModel.insertToFavourites(gameEntity).observe(this@DetailActivity, {
+					if (it > 0) {
+						Toast.makeText(
+							this@DetailActivity,
+							"${gameEntity.name} is added to Favourites!",
+							Toast.LENGTH_SHORT
+						).show()
+					} else {
+						Toast.makeText(
+							this@DetailActivity,
+							"Failed to add ${gameEntity.name} to Favourites!",
+							Toast.LENGTH_SHORT
+						).show()
+					}
+				})
 			}
 
 			override fun unLiked(likeButton: LikeButton?) {
-				Toast.makeText(
-					this@DetailActivity,
-					"Disliked",
-					Toast.LENGTH_SHORT
-				).show()
+				detailViewModel.deleteFromFavourites(gameEntity).observe(this@DetailActivity, {
+					if (it > 0) {
+						val intent = Intent()
+						intent.putExtra(EXTRA_POSITION, position)
+						intent.putExtra(EXTRA_NAME, gameEntity.name)
+						setResult(RESULT_DELETE, intent)
+						finish()
+					} else {
+						Toast.makeText(
+							this@DetailActivity,
+							"Failed to remove ${gameEntity.name} from Favourites",
+							Toast.LENGTH_SHORT
+						).show()
+					}
+				})
 			}
 		})
 	}
@@ -91,6 +114,8 @@ class DetailActivity : AppCompatActivity() {
 		activityDetailBinding.tvDetailDevelopers.text = gameEntity.developers
 
 		activityDetailBinding.tvDetailDescription.text = gameEntity.description
+
+		activityDetailBinding.lbDetailFavourite.isLiked = gameEntity.isFavourite
 
 		setTitleActionBar(gameEntity.name)
 

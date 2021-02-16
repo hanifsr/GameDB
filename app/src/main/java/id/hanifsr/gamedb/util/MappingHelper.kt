@@ -19,7 +19,8 @@ object MappingHelper {
 				it?.ratingTop ?: 0.0,
 				"",
 				it?.backgroundImage ?: "",
-				""
+				"",
+				false
 
 			)
 		} ?: emptyList()
@@ -36,7 +37,8 @@ object MappingHelper {
 				this?.ratingTop ?: 0.0,
 				this?.developers?.joinToString { developer -> developer?.name ?: "" } ?: "",
 				this?.backgroundImage ?: "",
-				this?.descriptionRaw ?: ""
+				this?.descriptionRaw ?: "",
+				false
 			)
 		}
 	}

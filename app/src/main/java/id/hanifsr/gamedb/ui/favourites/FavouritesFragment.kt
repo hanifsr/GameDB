@@ -73,7 +73,7 @@ class FavouritesFragment : Fragment() {
 	private fun showRecyclerView() {
 		fragmentFavouritesBinding.rvFavourites.setHasFixedSize(true)
 		fragmentFavouritesBinding.rvFavourites.layoutManager = LinearLayoutManager(activity)
-		favouritesRVAdapter = FavouritesRVAdapter(mutableListOf()) { gameEntity, position ->
+		favouritesRVAdapter = FavouritesRVAdapter(emptyList()) { gameEntity, position ->
 			showSelectedGame(
 				gameEntity,
 				position

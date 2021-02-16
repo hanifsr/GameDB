@@ -10,17 +10,19 @@ import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.ItemGamesVerticalBinding
 
 class FavouritesRVAdapter(
-	private var gameEntities: MutableList<GameEntity>,
+	private var gameEntities: List<GameEntity>,
 	private val onItemClick: (gameEntity: GameEntity, position: Int) -> Unit
 ) : RecyclerView.Adapter<FavouritesRVAdapter.FavouriteRVHolder>() {
 
 	fun updateFavouriteRVData(gameEntities: List<GameEntity>) {
-		this.gameEntities = gameEntities.toMutableList()
+		this.gameEntities = gameEntities
 		notifyDataSetChanged()
 	}
 
 	fun removeItem(position: Int) {
-		gameEntities.removeAt(position)
+		val mutableGameEntities = gameEntities.toMutableList()
+		mutableGameEntities.removeAt(position)
+		gameEntities = mutableGameEntities
 		notifyItemRemoved(position)
 		notifyItemRangeChanged(position, gameEntities.size)
 	}

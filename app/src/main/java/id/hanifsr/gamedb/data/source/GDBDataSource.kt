@@ -12,4 +12,8 @@ interface GDBDataSource {
 	fun searchGames(keyword: String): LiveData<List<GameEntity>>
 
 	fun getFavouriteGames(): LiveData<List<GameEntity>>
+
+	suspend fun insertGameToFavourites(gameEntity: GameEntity): Long
+
+	suspend fun deleteGameFromFavourites(gameEntity: GameEntity): Int
 }

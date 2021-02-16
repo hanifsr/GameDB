@@ -59,7 +59,7 @@ class HomeFragment : Fragment() {
 		if (data != null) {
 			if (requestCode == DetailActivity.REQUEST_DELETE && resultCode == DetailActivity.RESULT_DELETE) {
 				val name = data.getStringExtra(DetailActivity.EXTRA_NAME)
-				Toast.makeText(activity, "$name deleted from Favourites!", Toast.LENGTH_SHORT)
+				Toast.makeText(activity, "$name is removed from Favourites!", Toast.LENGTH_SHORT)
 					.show()
 			}
 		}

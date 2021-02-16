@@ -2,7 +2,6 @@ package id.hanifsr.gamedb.ui.search
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -73,7 +72,7 @@ class SearchFragment : Fragment() {
 		if (data != null) {
 			if (requestCode == DetailActivity.REQUEST_DELETE && resultCode == DetailActivity.RESULT_DELETE) {
 				val name = data.getStringExtra(DetailActivity.EXTRA_NAME)
-				Toast.makeText(activity, "$name deleted from Favourites!", Toast.LENGTH_SHORT)
+				Toast.makeText(activity, "$name is removed from Favourites!", Toast.LENGTH_SHORT)
 					.show()
 			}
 		}
