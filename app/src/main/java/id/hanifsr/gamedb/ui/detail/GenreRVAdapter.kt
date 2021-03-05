@@ -1,26 +1,20 @@
 package id.hanifsr.gamedb.ui.detail
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import id.hanifsr.gamedb.R
 import id.hanifsr.gamedb.databinding.ItemGenreBinding
 
-class GenreRVAdapter(
-	private var genres: List<String>
-) : RecyclerView.Adapter<GenreRVAdapter.GenreRVHolder>() {
+class GenreRVAdapter : RecyclerView.Adapter<GenreRVAdapter.GenreRVHolder>() {
 
-	fun updateGenre(genres: List<String>) {
-		this.genres = genres
-		notifyDataSetChanged()
-	}
+	var genres: List<String> = emptyList()
+		set(value) {
+			field = value
+			notifyDataSetChanged()
+		}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreRVHolder {
-		val view = LayoutInflater
-			.from(parent.context)
-			.inflate(R.layout.item_genre, parent, false)
-		return GenreRVHolder(view)
+		return GenreRVHolder.from(parent)
 	}
 
 	override fun onBindViewHolder(holder: GenreRVHolder, position: Int) {
@@ -31,10 +25,19 @@ class GenreRVAdapter(
 		return genres.size
 	}
 
-	inner class GenreRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-		private val binding = ItemGenreBinding.bind(itemView)
+	class GenreRVHolder private constructor(private val binding: ItemGenreBinding) :
+		RecyclerView.ViewHolder(binding.root) {
+
+		companion object {
+			fun from(parent: ViewGroup): GenreRVHolder {
+				val layoutInflater = LayoutInflater.from(parent.context)
+				val binding = ItemGenreBinding.inflate(layoutInflater, parent, false)
+				return GenreRVHolder(binding)
+			}
+		}
+
 		fun bind(genre: String) {
-			binding.tvItemGenre.text = genre
+			binding.genre = genre
 		}
 	}
 }

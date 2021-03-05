@@ -1,35 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="300dp"
-	android:layout_height="200dp"
-	android:layout_gravity="center"
-	android:layout_marginStart="12dp"
-	android:layout_marginTop="16dp"
-	android:layout_marginEnd="12dp"
-	android:layout_marginBottom="16dp"
-	app:cardCornerRadius="6dp">
+	xmlns:tools="http://schemas.android.com/tools">
 
-	<ImageView
-		android:id="@+id/iv_poster"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:contentDescription="@string/poster"
-		android:scaleType="fitXY"
-		tools:src="@android:color/darker_gray" />
+	<data>
 
-	<TextView
-		android:id="@+id/tv_item_number"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="5dp"
-		android:layout_marginTop="5dp"
-		android:background="@drawable/white_circle"
-		android:gravity="center"
-		android:textColor="@color/black"
-		android:textSize="12sp"
-		android:textStyle="italic"
-		tools:text="0" />
+		<variable
+			name="game"
+			type="id.hanifsr.gamedb.domain.Game" />
 
-</androidx.cardview.widget.CardView>
+		<variable
+			name="position"
+			type="String" />
+	</data>
+
+	<androidx.cardview.widget.CardView
+		android:layout_width="300dp"
+		android:layout_height="200dp"
+		android:layout_gravity="center"
+		android:layout_marginStart="12dp"
+		android:layout_marginTop="16dp"
+		android:layout_marginEnd="12dp"
+		android:layout_marginBottom="16dp"
+		app:cardCornerRadius="6dp">
+
+		<ImageView
+			android:id="@+id/iv_poster"
+			imageUrl="@{game.backgroundImage}"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:contentDescription="@string/poster"
+			android:scaleType="fitXY"
+			tools:src="@android:color/darker_gray" />
+
+		<TextView
+			android:id="@+id/tv_item_number"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="5dp"
+			android:layout_marginTop="5dp"
+			android:background="@drawable/white_circle"
+			android:gravity="center"
+			android:text="@{position}"
+			android:textColor="@color/black"
+			android:textSize="12sp"
+			android:textStyle="italic"
+			tools:text="0" />
+
+	</androidx.cardview.widget.CardView>
+</layout>

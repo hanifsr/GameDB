@@ -1,170 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:fillViewport="true"
-	tools:context=".ui.detail.DetailActivity">
+	xmlns:tools="http://schemas.android.com/tools">
 
-	<androidx.constraintlayout.widget.ConstraintLayout
+	<data>
+
+		<variable
+			name="game"
+			type="id.hanifsr.gamedb.domain.Game" />
+	</data>
+
+	<androidx.core.widget.NestedScrollView
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="match_parent"
+		android:fillViewport="true"
+		tools:context=".ui.detail.DetailActivity">
 
-		<ProgressBar
-			android:id="@+id/pb_detail"
-			style="?android:attr/progressBarStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-		<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			app:layout_constraintGuide_percent="0.33" />
+			<ProgressBar
+				android:id="@+id/pb_detail"
+				style="?android:attr/progressBarStyle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
 
-		<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline2"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			app:layout_constraintGuide_percent="0.67" />
+			<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				app:layout_constraintGuide_percent="0.33" />
 
-		<androidx.constraintlayout.widget.Barrier
-			android:id="@+id/barrier"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			app:barrierDirection="bottom"
-			app:constraint_referenced_ids="tv_detail_released, tv_detail_developers" />
+			<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				app:layout_constraintGuide_percent="0.67" />
 
-		<ImageView
-			android:id="@+id/iv_detail_banner"
-			android:layout_width="0dp"
-			android:layout_height="0dp"
-			android:contentDescription="@string/banner"
-			android:scaleType="fitXY"
-			app:layout_constraintDimensionRatio="16:9"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			tools:src="@android:color/darker_gray" />
+			<androidx.constraintlayout.widget.Barrier
+				android:id="@+id/barrier"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				app:barrierDirection="bottom"
+				app:constraint_referenced_ids="tv_detail_released, tv_detail_developers" />
 
-		<TextView
-			android:id="@+id/tv_detail_title"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="12dp"
-			android:layout_marginEnd="8dp"
-			android:textAlignment="center"
-			android:textColor="@color/black"
-			android:textSize="24sp"
-			android:textStyle="bold"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/iv_detail_banner"
-			tools:text="@string/title" />
+			<ImageView
+				android:id="@+id/iv_detail_banner"
+				imageUrl="@{game.backgroundImage}"
+				android:layout_width="0dp"
+				android:layout_height="0dp"
+				android:contentDescription="@string/banner"
+				android:scaleType="fitXY"
+				app:layout_constraintDimensionRatio="16:9"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+				tools:src="@android:color/darker_gray" />
 
-		<androidx.recyclerview.widget.RecyclerView
-			android:id="@+id/rv_detail_genre"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="4dp"
-			android:layout_marginEnd="8dp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/tv_detail_title"
-			tools:listitem="@layout/item_genre" />
+			<TextView
+				android:id="@+id/tv_detail_title"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginTop="12dp"
+				android:layout_marginEnd="8dp"
+				android:text="@{game.name}"
+				android:textAlignment="center"
+				android:textColor="@color/black"
+				android:textSize="24sp"
+				android:textStyle="bold"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/iv_detail_banner"
+				tools:text="@string/title" />
 
-		<TextView
-			android:id="@+id/tv_detail_released_text"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="8dp"
-			android:layout_marginEnd="8dp"
-			android:text="@string/released"
-			android:textAlignment="center"
-			android:textSize="14sp"
-			android:textStyle="bold"
-			app:layout_constraintEnd_toStartOf="@id/guideline"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/rv_detail_genre"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginTop="4dp"
+				android:layout_marginEnd="8dp"
+				android:orientation="horizontal"
+				app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/tv_detail_title"
+				tools:itemCount="5"
+				tools:listitem="@layout/item_genre" />
 
-		<TextView
-			android:id="@+id/tv_detail_released"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginEnd="8dp"
-			android:textAlignment="center"
-			android:textSize="14sp"
-			app:layout_constraintEnd_toStartOf="@id/guideline"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/tv_detail_released_text"
-			tools:text="@string/released" />
+			<TextView
+				android:id="@+id/tv_detail_released_text"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginTop="8dp"
+				android:layout_marginEnd="8dp"
+				android:text="@string/released"
+				android:textAlignment="center"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				app:layout_constraintEnd_toStartOf="@id/guideline"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
 
-		<TextView
-			android:id="@+id/tv_detail_developers_text"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="8dp"
-			android:layout_marginEnd="8dp"
-			android:text="@string/developers"
-			android:textAlignment="center"
-			android:textSize="14sp"
-			android:textStyle="bold"
-			app:layout_constraintEnd_toStartOf="@id/guideline2"
-			app:layout_constraintStart_toEndOf="@id/guideline"
-			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
+			<TextView
+				android:id="@+id/tv_detail_released"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginEnd="8dp"
+				android:text="@{game.released}"
+				android:textAlignment="center"
+				android:textSize="14sp"
+				app:layout_constraintEnd_toStartOf="@id/guideline"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/tv_detail_released_text"
+				tools:text="@string/released" />
 
-		<TextView
-			android:id="@+id/tv_detail_developers"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginEnd="8dp"
-			android:textAlignment="center"
-			android:textSize="14sp"
-			app:layout_constraintEnd_toStartOf="@id/guideline2"
-			app:layout_constraintStart_toEndOf="@id/guideline"
-			app:layout_constraintTop_toBottomOf="@id/tv_detail_developers_text"
-			tools:text="@string/developers" />
+			<TextView
+				android:id="@+id/tv_detail_developers_text"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginTop="8dp"
+				android:layout_marginEnd="8dp"
+				android:text="@string/developers"
+				android:textAlignment="center"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				app:layout_constraintEnd_toStartOf="@id/guideline2"
+				app:layout_constraintStart_toEndOf="@id/guideline"
+				app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
 
-		<com.like.LikeButton
-			android:id="@+id/lb_detail_favourite"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			app:circle_end_color="@color/turquoise_400"
-			app:circle_start_color="@color/blue_900"
-			app:dots_primary_color="@color/blue_900"
-			app:dots_secondary_color="@color/turquoise_400"
-			app:icon_size="20dp"
-			app:icon_type="heart"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toEndOf="@id/guideline2"
-			app:layout_constraintTop_toBottomOf="@id/rv_detail_genre" />
+			<TextView
+				android:id="@+id/tv_detail_developers"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginEnd="8dp"
+				android:text="@{game.developers}"
+				android:textAlignment="center"
+				android:textSize="14sp"
+				app:layout_constraintEnd_toStartOf="@id/guideline2"
+				app:layout_constraintStart_toEndOf="@id/guideline"
+				app:layout_constraintTop_toBottomOf="@id/tv_detail_developers_text"
+				tools:text="@string/developers" />
 
-		<TextView
-			android:id="@+id/tv_detail_description"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="12dp"
-			android:layout_marginEnd="8dp"
-			android:textSize="14sp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/barrier"
-			tools:text="@string/description" />
+			<com.like.LikeButton
+				android:id="@+id/lb_detail_favourite"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				app:circle_end_color="@color/turquoise_400"
+				app:circle_start_color="@color/blue_900"
+				app:dots_primary_color="@color/blue_900"
+				app:dots_secondary_color="@color/turquoise_400"
+				app:icon_size="20dp"
+				app:icon_type="heart"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toEndOf="@id/guideline2"
+				app:layout_constraintTop_toBottomOf="@id/rv_detail_genre"
+				app:liked="@{game.favourite}" />
 
-	</androidx.constraintlayout.widget.ConstraintLayout>
+			<TextView
+				android:id="@+id/tv_detail_description"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:layout_marginTop="12dp"
+				android:layout_marginEnd="8dp"
+				android:text="@{game.description}"
+				android:textSize="14sp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/barrier"
+				tools:text="@string/description" />
 
-</androidx.core.widget.NestedScrollView>
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+	</androidx.core.widget.NestedScrollView>
+</layout>

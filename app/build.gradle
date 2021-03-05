@@ -1,9 +1,9 @@
 plugins {
 	id 'com.android.application'
 	id 'kotlin-android'
-	id 'kotlin-parcelize'
-	id 'androidx.navigation.safeargs'
 	id 'kotlin-kapt'
+	id 'androidx.navigation.safeargs'
+	id 'kotlin-parcelize'
 }
 
 android {
@@ -66,7 +66,6 @@ dependencies {
 	implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
 	implementation 'androidx.navigation:navigation-fragment-ktx:2.3.3'
 	implementation 'androidx.navigation:navigation-ui-ktx:2.3.3'
-	annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0'
 
 	// Local unit tests
 	testImplementation 'junit:junit:4.13.2'
@@ -84,10 +83,16 @@ dependencies {
 
 	// Glide
 	implementation 'com.github.bumptech.glide:glide:4.12.0'
+	kapt 'com.github.bumptech.glide:compiler:4.12.0'
 
 	// Retrofit
 	implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-	implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+	implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+
+	// Moshi
+	implementation 'com.squareup.moshi:moshi:1.11.0'
+	implementation 'com.squareup.moshi:moshi-kotlin:1.11.0'
+	kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.11.0'
 
 	// Like Button
 	implementation 'com.github.jd-alexander:LikeButton:0.2.3'

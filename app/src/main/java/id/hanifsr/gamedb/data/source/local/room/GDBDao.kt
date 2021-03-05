@@ -1,6 +1,5 @@
 package id.hanifsr.gamedb.data.source.local.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -11,10 +10,10 @@ import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 interface GDBDao {
 
 	@Query("SELECT * FROM gameentity")
-	fun getFavouriteGames(): LiveData<List<GameEntity>>
+	suspend fun getFavouriteGames(): List<GameEntity>
 
 	@Query("SELECT * FROM gameentity WHERE id = :id")
-	fun getGameFromFavourites(id: Int): LiveData<GameEntity>
+	suspend fun getGameFromFavourites(id: Int): GameEntity
 
 	@Insert
 	suspend fun insertGameToFavourites(gameEntity: GameEntity): Long

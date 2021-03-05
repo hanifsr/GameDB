@@ -1,19 +1,13 @@
 package id.hanifsr.gamedb.data.source
 
-import androidx.lifecycle.LiveData
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
+import id.hanifsr.gamedb.domain.Game
+import id.hanifsr.gamedb.vo.Result
 
 interface GDBDataSource {
-
-	fun getPopularGames(): LiveData<List<GameEntity>>
-
-	fun getGameDetail(id: Int): LiveData<GameEntity>
-
-	fun searchGames(keyword: String): LiveData<List<GameEntity>>
-
-	fun getFavouriteGames(): LiveData<List<GameEntity>>
-
-	suspend fun insertGameToFavourites(gameEntity: GameEntity): Long
-
-	suspend fun deleteGameFromFavourites(gameEntity: GameEntity): Int
+	suspend fun getPopularGames(): Result<List<Game>>
+	suspend fun getGameDetail(id: Int): Result<Game>
+	suspend fun searchGames(keyword: String): Result<List<Game>>
+	suspend fun getFavouriteGames(): Result<List<Game>>
+	suspend fun insertGameToFavourites(game: Game): Result<Long>
+	suspend fun deleteGameFromFavourites(game: Game): Result<Int>
 }

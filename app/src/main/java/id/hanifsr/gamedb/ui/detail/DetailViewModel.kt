@@ -5,26 +5,39 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.hanifsr.gamedb.data.source.GDBRepository
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
+import id.hanifsr.gamedb.domain.Game
+import id.hanifsr.gamedb.vo.Result
 import kotlinx.coroutines.launch
 
 class DetailViewModel(private val gdbRepository: GDBRepository) : ViewModel() {
 
-	fun getDetail(id: Int): LiveData<GameEntity> = gdbRepository.getGameDetail(id)
+	private val gameDetail = MutableLiveData<Result<Game>>()
 
-	fun insertToFavourites(gameEntity: GameEntity): LiveData<Long> {
-		val id = MutableLiveData<Long>()
+	init {
+		gameDetail.value = Result.Loading
+	}
+
+	fun getDetail(id: Int): LiveData<Result<Game>> {
 		viewModelScope.launch {
-			id.postValue(gdbRepository.insertGameToFavourites(gameEntity))
+			gameDetail.value = gdbRepository.getGameDetail(id)
+		}
+
+		return gameDetail
+	}
+
+	fun insertToFavourites(game: Game): LiveData<Result<Long>> {
+		val id = MutableLiveData<Result<Long>>()
+		viewModelScope.launch {
+			id.value = gdbRepository.insertGameToFavourites(game)
 		}
 
 		return id
 	}
 
-	fun deleteFromFavourites(gameEntity: GameEntity): LiveData<Int> {
-		val affectedRow = MutableLiveData<Int>()
+	fun deleteFromFavourites(game: Game): LiveData<Result<Int>> {
+		val affectedRow = MutableLiveData<Result<Int>>()
 		viewModelScope.launch {
-			affectedRow.postValue(gdbRepository.deleteGameFromFavourites(gameEntity))
+			affectedRow.value = gdbRepository.deleteGameFromFavourites(game)
 		}
 
 		return affectedRow

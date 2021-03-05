@@ -1,57 +1,66 @@
 package id.hanifsr.gamedb.ui.favourites
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import id.hanifsr.gamedb.R
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.ItemGamesVerticalBinding
+import id.hanifsr.gamedb.domain.Game
 
 class FavouritesRVAdapter(
-	private var gameEntities: List<GameEntity>,
-	private val onItemClick: (gameEntity: GameEntity, position: Int) -> Unit
+	private val onItemClick: (game: Game, position: Int) -> Unit
 ) : RecyclerView.Adapter<FavouritesRVAdapter.FavouriteRVHolder>() {
 
-	fun updateFavouriteRVData(gameEntities: List<GameEntity>) {
-		this.gameEntities = gameEntities
+	var games: List<Game> = emptyList()
+
+	fun updateFavouriteRVData(games: List<Game>) {
+		this.games = games
 		notifyDataSetChanged()
 	}
 
 	fun removeItem(position: Int) {
-		val mutableGameEntities = gameEntities.toMutableList()
+		val mutableGameEntities = games.toMutableList()
 		mutableGameEntities.removeAt(position)
-		gameEntities = mutableGameEntities
+		games = mutableGameEntities
 		notifyItemRemoved(position)
-		notifyItemRangeChanged(position, gameEntities.size)
+		notifyItemRangeChanged(position, games.size)
 	}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavouriteRVHolder {
-		val view = LayoutInflater
-			.from(parent.context)
-			.inflate(R.layout.item_games_vertical, parent, false)
-		return FavouriteRVHolder(view)
+		return FavouriteRVHolder.from(parent)
 	}
 
 	override fun onBindViewHolder(holder: FavouriteRVHolder, position: Int) {
-		holder.bind(gameEntities[position], position)
+		holder.bind(games[position], position, onItemClick)
 	}
 
 	override fun getItemCount(): Int {
-		return gameEntities.size
+		return games.size
 	}
 
-	inner class FavouriteRVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-		private val binding = ItemGamesVerticalBinding.bind(itemView)
-		fun bind(gameEntity: GameEntity, position: Int) {
-			Glide.with(itemView.context)
-				.load(gameEntity.backgroundImage)
-				.into(binding.ivSearchBanner)
+	class FavouriteRVHolder private constructor(private val binding: ItemGamesVerticalBinding) :
+		RecyclerView.ViewHolder(binding.root) {
 
-			binding.tvSearchTitle.text = gameEntity.name
+		companion object {
+			fun from(parent: ViewGroup): FavouriteRVHolder {
+				val layoutInflater = LayoutInflater.from(parent.context)
+				val binding = ItemGamesVerticalBinding.inflate(layoutInflater, parent, false)
 
-			itemView.setOnClickListener { onItemClick.invoke(gameEntity, position) }
+				return FavouriteRVHolder(binding)
+			}
+		}
+
+		fun bind(
+			game: Game,
+			position: Int,
+			onItemClick: (game: Game, position: Int) -> Unit
+		) {
+			binding.game = game
+			itemView.setOnClickListener {
+				onItemClick.invoke(
+					game,
+					position
+				)
+			}
 		}
 	}
 }

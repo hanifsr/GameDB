@@ -1,4 +1,4 @@
-package id.hanifsr.gamedb.util.recyclerview
+package id.hanifsr.gamedb.util.recyclerview.decoration
 
 import android.graphics.Rect
 import android.view.View

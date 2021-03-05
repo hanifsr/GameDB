@@ -8,47 +8,50 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.FragmentHomeBinding
+import id.hanifsr.gamedb.domain.Game
 import id.hanifsr.gamedb.ui.detail.DetailActivity
-import id.hanifsr.gamedb.util.recyclerview.OnSnapPositionChangeListener
-import id.hanifsr.gamedb.util.recyclerview.SnapOnScrollListener
-import id.hanifsr.gamedb.util.recyclerview.attachSnapHelperWithListener
+import id.hanifsr.gamedb.util.recyclerview.snap.OnSnapPositionChangeListener
+import id.hanifsr.gamedb.util.recyclerview.snap.SnapOnScrollListener
+import id.hanifsr.gamedb.util.recyclerview.snap.attachSnapHelperWithListener
 import id.hanifsr.gamedb.viewmodel.ViewModelFactory
+import id.hanifsr.gamedb.vo.Result
 
 class HomeFragment : Fragment() {
 
-	private var _fragmentHomeBinding: FragmentHomeBinding? = null
-	private val fragmentHomeBinding get() = _fragmentHomeBinding!!
-	private lateinit var homeRVAdapter: HomeRVAdapter
-	private lateinit var homeViewModel: HomeViewModel
-
-	private var gameEntities: List<GameEntity> = emptyList()
+	private var _binding: FragmentHomeBinding? = null
+	private val binding get() = _binding!!
+	private lateinit var adapter: HomeRVAdapter
+	private lateinit var viewModel: HomeViewModel
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		/*fragmentHomeBinding =
-			DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)*/
-		_fragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
-		return fragmentHomeBinding.root
+		_binding = FragmentHomeBinding.inflate(inflater, container, false)
+		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		if (activity != null) {
-			showMark(true)
-			showRecyclerView()
+			initRecyclerView()
 
 			val factory = ViewModelFactory.getInstance(requireActivity())
-			homeViewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
-			homeViewModel.popularGames.observe(viewLifecycleOwner, {
-				if (it != null) {
-					onPopularGamesFetched(it)
+			viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
+			viewModel.popularGames.observe(viewLifecycleOwner, {
+				when (it) {
+					is Result.Loading -> showMark(true)
+					is Result.Success -> onPopularGamesFetched(it.data)
+					is Result.Empty -> Toast.makeText(
+						activity,
+						"Games are empty!",
+						Toast.LENGTH_LONG
+					).show()
+					is Result.Error -> Toast.makeText(activity, it.errorMessage, Toast.LENGTH_LONG)
+						.show()
 				}
 			})
 		}
@@ -67,48 +70,43 @@ class HomeFragment : Fragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		_fragmentHomeBinding = null
+		_binding = null
 	}
 
-	private fun showRecyclerView() {
-		fragmentHomeBinding.rvGames.setHasFixedSize(true)
-		fragmentHomeBinding.rvGames.layoutManager =
-			LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-		homeRVAdapter = HomeRVAdapter(emptyList()) { gameEntity -> showSelectedGame(gameEntity) }
-		fragmentHomeBinding.rvGames.adapter = homeRVAdapter
-
-		val snapHelper = PagerSnapHelper()
-		fragmentHomeBinding.rvGames.attachSnapHelperWithListener(snapHelper,
+	private fun initRecyclerView() {
+		binding.rvGames.setHasFixedSize(true)
+		adapter = HomeRVAdapter { game -> showSelectedGame(game) }
+		binding.rvGames.adapter = adapter
+		binding.rvGames.attachSnapHelperWithListener(
+			PagerSnapHelper(),
 			SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
 			object : OnSnapPositionChangeListener {
 				override fun onSnapPositionChange(position: Int) {
-					fragmentHomeBinding.tvTitle.text = gameEntities[position].name
-					fragmentHomeBinding.tvGenre.text = gameEntities[position].genres
+					binding.game = adapter.games[position]
 				}
 			})
 	}
 
-	private fun showSelectedGame(gameEntity: GameEntity) {
+	private fun showSelectedGame(game: Game) {
 		val intent = Intent(activity, DetailActivity::class.java)
-		intent.putExtra(DetailActivity.EXTRA_ID, gameEntity.id)
+		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
 		startActivityForResult(intent, DetailActivity.REQUEST_DELETE)
 	}
 
-	private fun onPopularGamesFetched(gameEntities: List<GameEntity>) {
-		homeRVAdapter.updateGames(gameEntities)
-		this.gameEntities = gameEntities
+	private fun onPopularGamesFetched(games: List<Game>) {
+		adapter.games = games
 		showMark(false)
 	}
 
 	private fun showMark(state: Boolean) {
 		if (state) {
-			fragmentHomeBinding.pbHome.visibility = View.VISIBLE
-			fragmentHomeBinding.tvPopular.visibility = View.GONE
-			fragmentHomeBinding.tvThisMonth.visibility = View.GONE
+			binding.pbHome.visibility = View.VISIBLE
+			binding.tvPopular.visibility = View.GONE
+			binding.tvThisMonth.visibility = View.GONE
 		} else {
-			fragmentHomeBinding.pbHome.visibility = View.GONE
-			fragmentHomeBinding.tvPopular.visibility = View.VISIBLE
-			fragmentHomeBinding.tvThisMonth.visibility = View.VISIBLE
+			binding.pbHome.visibility = View.GONE
+			binding.tvPopular.visibility = View.VISIBLE
+			binding.tvThisMonth.visibility = View.VISIBLE
 		}
 	}
 }

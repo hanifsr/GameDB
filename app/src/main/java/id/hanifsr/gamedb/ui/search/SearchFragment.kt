@@ -9,11 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
 import id.hanifsr.gamedb.databinding.FragmentSearchBinding
+import id.hanifsr.gamedb.domain.Game
 import id.hanifsr.gamedb.ui.detail.DetailActivity
 import id.hanifsr.gamedb.viewmodel.ViewModelFactory
+import id.hanifsr.gamedb.vo.Result
 
 class SearchFragment : Fragment() {
 
@@ -27,8 +27,6 @@ class SearchFragment : Fragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		/*fragmentSearchBinding =
-			DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)*/
 		_fragmentSearchBinding = FragmentSearchBinding.inflate(inflater, container, false)
 		return fragmentSearchBinding.root
 	}
@@ -36,14 +34,21 @@ class SearchFragment : Fragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		if (activity != null) {
-			showMark(true)
-			showRecyclerView()
+			initRecyclerView()
 
 			val factory = ViewModelFactory.getInstance(requireActivity())
 			searchViewModel = ViewModelProvider(this, factory).get(SearchViewModel::class.java)
 			searchViewModel.searchGames.observe(viewLifecycleOwner, {
-				if (it != null) {
-					onSearchGamesFetched(it)
+				when (it) {
+					is Result.Loading -> showMark(true)
+					is Result.Success -> onSearchGamesFetched(it.data)
+					is Result.Empty -> Toast.makeText(
+						activity,
+						"Search result is 0!",
+						Toast.LENGTH_LONG
+					).show()
+					is Result.Error -> Toast.makeText(activity, it.errorMessage, Toast.LENGTH_LONG)
+						.show()
 				}
 			})
 
@@ -53,14 +58,14 @@ class SearchFragment : Fragment() {
 					if (query != null) {
 						searchViewModel.keyword.postValue(query)
 					}
-					return true
+					return false
 				}
 
 				override fun onQueryTextChange(newText: String?): Boolean {
 					if (newText?.isEmpty() == true) {
 						searchViewModel.keyword.postValue("")
 					}
-					return true
+					return false
 				}
 
 			})
@@ -83,22 +88,21 @@ class SearchFragment : Fragment() {
 		_fragmentSearchBinding = null
 	}
 
-	private fun showRecyclerView() {
+	private fun initRecyclerView() {
 		fragmentSearchBinding.rvSearch.setHasFixedSize(true)
-		fragmentSearchBinding.rvSearch.layoutManager = LinearLayoutManager(activity)
 		searchRVAdapter =
-			SearchRVAdapter(emptyList()) { gameEntity -> showSelectedGame(gameEntity) }
+			SearchRVAdapter { game -> showSelectedGame(game) }
 		fragmentSearchBinding.rvSearch.adapter = searchRVAdapter
 	}
 
-	private fun showSelectedGame(gameEntity: GameEntity) {
+	private fun showSelectedGame(game: Game) {
 		val intent = Intent(activity, DetailActivity::class.java)
-		intent.putExtra(DetailActivity.EXTRA_ID, gameEntity.id)
+		intent.putExtra(DetailActivity.EXTRA_ID, game.id)
 		startActivityForResult(intent, DetailActivity.REQUEST_DELETE)
 	}
 
-	private fun onSearchGamesFetched(gameEntities: List<GameEntity>) {
-		searchRVAdapter.updateSearch(gameEntities)
+	private fun onSearchGamesFetched(games: List<Game>) {
+		searchRVAdapter.games = games
 		showMark(false)
 	}
 

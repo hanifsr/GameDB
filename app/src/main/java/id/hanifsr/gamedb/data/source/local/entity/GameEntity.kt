@@ -1,22 +1,52 @@
 package id.hanifsr.gamedb.data.source.local.entity
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import id.hanifsr.gamedb.domain.Game
 
 @Entity
 data class GameEntity(
 	@PrimaryKey
-	@ColumnInfo
 	val id: Int,
-
-	@ColumnInfo val name: String,
-	@ColumnInfo val genres: String,
-	@ColumnInfo val released: String,
-	@ColumnInfo val rating: Double,
-	@ColumnInfo val ratingTop: Double,
-	@ColumnInfo val developers: String,
-	@ColumnInfo val backgroundImage: String,
-	@ColumnInfo val description: String,
-	@ColumnInfo var isFavourite: Boolean
+	val name: String,
+	val genres: String,
+	val released: String,
+	val rating: Double,
+	val ratingTop: Double,
+	val developers: String,
+	val backgroundImage: String,
+	val description: String,
+	var isFavourite: Boolean
 )
+
+fun List<GameEntity>.asDomainModel(): List<Game> {
+	return map {
+		Game(
+			it.id,
+			it.name,
+			it.genres,
+			it.released,
+			it.rating,
+			it.ratingTop,
+			it.developers,
+			it.backgroundImage,
+			it.description,
+			it.isFavourite
+		)
+	}
+}
+
+fun GameEntity.asDomainModel(): Game {
+	return Game(
+		id,
+		name,
+		genres,
+		released,
+		rating,
+		ratingTop,
+		developers,
+		backgroundImage,
+		description,
+		isFavourite
+	)
+}
