@@ -44,10 +44,10 @@ class DetailActivity : AppCompatActivity() {
 		viewModel = ViewModelProvider(this, factory).get(DetailViewModel::class.java)
 		viewModel.getDetail(id).observe(this, {
 			when (it) {
-				is Result.Loading -> showMark(true)
+				is Result.Loading -> showMark(loading = true, false, null)
 				is Result.Success -> gameDetailFetched(it.data)
-				is Result.Empty -> Toast.makeText(this, "Game is empty!", Toast.LENGTH_LONG).show()
-				is Result.Error -> Toast.makeText(this, it.errorMessage, Toast.LENGTH_LONG).show()
+				is Result.Empty -> showMark(loading = false, true, "Game is empty!")
+				is Result.Error -> showMark(loading = false, true, it.errorMessage)
 			}
 		})
 
@@ -101,7 +101,7 @@ class DetailActivity : AppCompatActivity() {
 		genreRVAdapter.genres = game.genres.split(", ")
 		this.game = game
 		setTitleActionBar(game.name)
-		showMark(false)
+		showMark(loading = false, false, null)
 	}
 
 	private fun setTitleActionBar(title: String) {
@@ -110,17 +110,29 @@ class DetailActivity : AppCompatActivity() {
 		supportActionBar?.elevation = 0F
 	}
 
-	private fun showMark(state: Boolean) {
-		if (state) {
+	private fun showMark(loading: Boolean, error: Boolean, message: String?) {
+		if (loading) {
 			binding.pbDetail.visibility = View.VISIBLE
+			binding.ivStatusDetail.visibility = View.GONE
+			binding.tvStatusDetail.visibility = View.GONE
 			binding.tvDetailReleasedText.visibility = View.GONE
 			binding.tvDetailDevelopersText.visibility = View.GONE
 			binding.lbDetailFavourite.visibility = View.GONE
 		} else {
 			binding.pbDetail.visibility = View.GONE
-			binding.tvDetailReleasedText.visibility = View.VISIBLE
-			binding.tvDetailDevelopersText.visibility = View.VISIBLE
-			binding.lbDetailFavourite.visibility = View.VISIBLE
+			if (error) {
+				binding.ivStatusDetail.visibility = View.VISIBLE
+				binding.tvStatusDetail.visibility = View.VISIBLE
+				binding.tvStatusDetail.text = message
+				binding.tvDetailReleasedText.visibility = View.GONE
+				binding.tvDetailDevelopersText.visibility = View.GONE
+				binding.lbDetailFavourite.visibility = View.GONE
+			} else {
+				binding.tvDetailReleasedText.visibility = View.VISIBLE
+				binding.tvDetailDevelopersText.visibility = View.VISIBLE
+				binding.lbDetailFavourite.visibility = View.VISIBLE
+			}
+
 		}
 	}
 }

@@ -25,4 +25,11 @@ object Util {
 		}
 	}
 
+	fun <T> isListEqual(firstList: List<T>, secondList: List<T>): Boolean {
+		if (firstList.size != secondList.size) {
+			return false
+		}
+
+		return firstList.zip(secondList).all { (first, second) -> first == second }
+	}
 }

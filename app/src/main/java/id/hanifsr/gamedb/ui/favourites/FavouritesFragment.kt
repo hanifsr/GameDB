@@ -16,18 +16,18 @@ import id.hanifsr.gamedb.vo.Result
 
 class FavouritesFragment : Fragment() {
 
-	private var _fragmentFavouritesBinding: FragmentFavouritesBinding? = null
-	private val fragmentFavouritesBinding get() = _fragmentFavouritesBinding!!
-	private lateinit var favouritesRVAdapter: FavouritesRVAdapter
-	private lateinit var favouritesViewModel: FavouritesViewModel
+	private var _binding: FragmentFavouritesBinding? = null
+	private val binding get() = _binding!!
+	private lateinit var adapter: FavouritesRVAdapter
+	private lateinit var viewModel: FavouritesViewModel
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		_fragmentFavouritesBinding = FragmentFavouritesBinding.inflate(inflater, container, false)
-		return fragmentFavouritesBinding.root
+		_binding = FragmentFavouritesBinding.inflate(inflater, container, false)
+		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,15 +36,14 @@ class FavouritesFragment : Fragment() {
 			initRecyclerView()
 
 			val factory = ViewModelFactory.getInstance(requireActivity())
-			favouritesViewModel =
+			viewModel =
 				ViewModelProvider(this, factory).get(FavouritesViewModel::class.java)
-			favouritesViewModel.favouriteGames.observe(viewLifecycleOwner, {
+			viewModel.favouriteGames.observe(viewLifecycleOwner, {
 				when (it) {
-					is Result.Loading -> showMark(true)
+					is Result.Loading -> showMark(loading = true, false, null)
 					is Result.Success -> onFavouriteGamesFetched(it.data)
-					is Result.Empty -> showMark(false)
-					is Result.Error -> Toast.makeText(activity, it.errorMessage, Toast.LENGTH_LONG)
-						.show()
+					is Result.Empty -> showMark(loading = false, false, null)
+					is Result.Error -> showMark(loading = false, true, it.errorMessage)
 				}
 			})
 		}
@@ -56,28 +55,28 @@ class FavouritesFragment : Fragment() {
 			if (requestCode == DetailActivity.REQUEST_DELETE && resultCode == DetailActivity.RESULT_DELETE) {
 				val position = data.getIntExtra(DetailActivity.EXTRA_POSITION, -1)
 				val name = data.getStringExtra(DetailActivity.EXTRA_NAME)
-				favouritesRVAdapter.removeItem(position)
+				adapter.removeItem(position)
 				Toast.makeText(activity, "$name deleted from Favourites!", Toast.LENGTH_SHORT)
 					.show()
 			}
-			showMark(false)
+			showMark(loading = false, false, null)
 		}
 	}
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		_fragmentFavouritesBinding = null
+		_binding = null
 	}
 
 	private fun initRecyclerView() {
-		fragmentFavouritesBinding.rvFavourites.setHasFixedSize(true)
-		favouritesRVAdapter = FavouritesRVAdapter { game, position ->
+		binding.rvFavourites.setHasFixedSize(true)
+		adapter = FavouritesRVAdapter { game, position ->
 			showSelectedGame(
 				game,
 				position
 			)
 		}
-		fragmentFavouritesBinding.rvFavourites.adapter = favouritesRVAdapter
+		binding.rvFavourites.adapter = adapter
 	}
 
 	private fun showSelectedGame(game: Game, position: Int) {
@@ -88,19 +87,29 @@ class FavouritesFragment : Fragment() {
 	}
 
 	private fun onFavouriteGamesFetched(games: List<Game>) {
-		favouritesRVAdapter.updateFavouriteRVData(games)
-		showMark(false)
+		adapter.updateFavouriteRVData(games)
+		showMark(loading = false, false, null)
 	}
 
-	private fun showMark(state: Boolean) {
-		if (state) {
-			fragmentFavouritesBinding.pbFavourites.visibility = View.VISIBLE
+	private fun showMark(loading: Boolean, error: Boolean, message: String?) {
+		if (loading) {
+			binding.pbFavourites.visibility = View.VISIBLE
+			binding.ivStatusFavourites.visibility = View.GONE
+			binding.tvStatusFavourites.visibility = View.GONE
+			binding.tvFavouritesText.visibility = View.GONE
 		} else {
-			fragmentFavouritesBinding.pbFavourites.visibility = View.GONE
-			if (favouritesRVAdapter.itemCount > 0) {
-				fragmentFavouritesBinding.tvFavouritesText.visibility = View.GONE
+			binding.pbFavourites.visibility = View.GONE
+			if (error) {
+				binding.ivStatusFavourites.visibility = View.VISIBLE
+				binding.tvStatusFavourites.visibility = View.VISIBLE
+				binding.tvStatusFavourites.text = message
+				binding.tvFavouritesText.visibility = View.GONE
 			} else {
-				fragmentFavouritesBinding.tvFavouritesText.visibility = View.VISIBLE
+				if (adapter.itemCount > 0) {
+					binding.tvFavouritesText.visibility = View.GONE
+				} else {
+					binding.tvFavouritesText.visibility = View.VISIBLE
+				}
 			}
 		}
 	}

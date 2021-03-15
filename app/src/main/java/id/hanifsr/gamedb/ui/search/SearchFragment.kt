@@ -17,18 +17,18 @@ import id.hanifsr.gamedb.vo.Result
 
 class SearchFragment : Fragment() {
 
-	private var _fragmentSearchBinding: FragmentSearchBinding? = null
-	private val fragmentSearchBinding get() = _fragmentSearchBinding!!
-	private lateinit var searchRVAdapter: SearchRVAdapter
-	private lateinit var searchViewModel: SearchViewModel
+	private var _binding: FragmentSearchBinding? = null
+	private val binding get() = _binding!!
+	private lateinit var adapter: SearchRVAdapter
+	private lateinit var viewModel: SearchViewModel
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		_fragmentSearchBinding = FragmentSearchBinding.inflate(inflater, container, false)
-		return fragmentSearchBinding.root
+		_binding = FragmentSearchBinding.inflate(inflater, container, false)
+		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,33 +37,28 @@ class SearchFragment : Fragment() {
 			initRecyclerView()
 
 			val factory = ViewModelFactory.getInstance(requireActivity())
-			searchViewModel = ViewModelProvider(this, factory).get(SearchViewModel::class.java)
-			searchViewModel.searchGames.observe(viewLifecycleOwner, {
+			viewModel = ViewModelProvider(this, factory).get(SearchViewModel::class.java)
+			viewModel.searchGames.observe(viewLifecycleOwner, {
 				when (it) {
-					is Result.Loading -> showMark(true)
+					is Result.Loading -> showMark(loading = true, false, null)
 					is Result.Success -> onSearchGamesFetched(it.data)
-					is Result.Empty -> Toast.makeText(
-						activity,
-						"Search result is 0!",
-						Toast.LENGTH_LONG
-					).show()
-					is Result.Error -> Toast.makeText(activity, it.errorMessage, Toast.LENGTH_LONG)
-						.show()
+					is Result.Empty -> showMark(loading = false, true, "Search result is 0!")
+					is Result.Error -> showMark(loading = false, true, it.errorMessage)
 				}
 			})
 
-			fragmentSearchBinding.svSearch.setOnQueryTextListener(object :
+			binding.svSearch.setOnQueryTextListener(object :
 				SearchView.OnQueryTextListener {
 				override fun onQueryTextSubmit(query: String?): Boolean {
 					if (query != null) {
-						searchViewModel.keyword.postValue(query)
+						viewModel.keyword.postValue(query)
 					}
 					return false
 				}
 
 				override fun onQueryTextChange(newText: String?): Boolean {
 					if (newText?.isEmpty() == true) {
-						searchViewModel.keyword.postValue("")
+						viewModel.keyword.postValue("")
 					}
 					return false
 				}
@@ -85,14 +80,14 @@ class SearchFragment : Fragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		_fragmentSearchBinding = null
+		_binding = null
 	}
 
 	private fun initRecyclerView() {
-		fragmentSearchBinding.rvSearch.setHasFixedSize(true)
-		searchRVAdapter =
+		binding.rvSearch.setHasFixedSize(true)
+		adapter =
 			SearchRVAdapter { game -> showSelectedGame(game) }
-		fragmentSearchBinding.rvSearch.adapter = searchRVAdapter
+		binding.rvSearch.adapter = adapter
 	}
 
 	private fun showSelectedGame(game: Game) {
@@ -102,17 +97,26 @@ class SearchFragment : Fragment() {
 	}
 
 	private fun onSearchGamesFetched(games: List<Game>) {
-		searchRVAdapter.games = games
-		showMark(false)
+		adapter.games = games
+		showMark(loading = false, false, null)
 	}
 
-	private fun showMark(state: Boolean) {
-		if (state) {
-			fragmentSearchBinding.pbSearch.visibility = View.VISIBLE
-			fragmentSearchBinding.svSearch.visibility = View.GONE
+	private fun showMark(loading: Boolean, error: Boolean, message: String?) {
+		if (loading) {
+			binding.pbSearch.visibility = View.VISIBLE
+			binding.ivStatusSearch.visibility = View.GONE
+			binding.tvStatusSearch.visibility = View.GONE
+			binding.svSearch.visibility = View.GONE
 		} else {
-			fragmentSearchBinding.pbSearch.visibility = View.GONE
-			fragmentSearchBinding.svSearch.visibility = View.VISIBLE
+			binding.pbSearch.visibility = View.GONE
+			if (error) {
+				binding.ivStatusSearch.visibility = View.VISIBLE
+				binding.tvStatusSearch.visibility = View.VISIBLE
+				binding.tvStatusSearch.text = message
+				binding.svSearch.visibility = View.GONE
+			} else {
+				binding.svSearch.visibility = View.VISIBLE
+			}
 		}
 	}
 }

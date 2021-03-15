@@ -1,6 +1,7 @@
 package id.hanifsr.gamedb.util
 
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -18,4 +19,11 @@ fun setImageUrl(imageView: ImageView, url: String?) {
 				.error(R.drawable.ic_baseline_broken_image_24)
 		)
 		.into(imageView)
+}
+
+@BindingAdapter("releasedFormatted")
+fun TextView.setReleasedFormatted(date: String?) {
+	if (date.isNullOrEmpty()) return
+
+	text = Util.dateFormat(date)
 }

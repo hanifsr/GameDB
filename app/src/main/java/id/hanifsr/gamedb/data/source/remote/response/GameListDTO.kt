@@ -3,7 +3,7 @@ package id.hanifsr.gamedb.data.source.remote.response
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
+import id.hanifsr.gamedb.data.source.local.entity.PopularListEntity
 import id.hanifsr.gamedb.domain.Game
 
 @JsonClass(generateAdapter = true)
@@ -18,6 +18,7 @@ data class GameListDTO(
 		val rating: Double?,
 		@Json(name = "rating_top")
 		val ratingTop: Double?,
+		val added: Int?,
 		val id: Int?,
 		val genres: List<Genre?>?
 	) {
@@ -46,19 +47,16 @@ fun GameListDTO.asDomainModel(): List<Game> {
 	} ?: emptyList()
 }
 
-fun GameListDTO.asDatabaseEntity(): List<GameEntity> {
+fun GameListDTO.asDatabaseEntity(): List<PopularListEntity> {
 	return results?.map {
-		GameEntity(
+		PopularListEntity(
 			it?.id ?: 0,
 			it?.name ?: "",
 			it?.genres?.joinToString { genre -> genre?.name ?: "" } ?: "",
-			"",
+			it?.added ?: 0,
 			it?.rating ?: 0.0,
 			it?.ratingTop ?: 0.0,
-			"",
 			it?.backgroundImage ?: "",
-			"",
-			false
 		)
 	} ?: emptyList()
 }

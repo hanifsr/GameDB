@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
+import id.hanifsr.gamedb.data.source.local.entity.FavouriteEntity
+import id.hanifsr.gamedb.data.source.local.entity.PopularDetailEntity
+import id.hanifsr.gamedb.data.source.local.entity.PopularListEntity
 
 @Database(
-	entities = [GameEntity::class],
+	entities = [FavouriteEntity::class, PopularDetailEntity::class, PopularListEntity::class],
 	version = 1,
 	exportSchema = false
 )

@@ -15,4 +15,5 @@
 	<string name="title_favourites">Favourites</string>
 	<string name="try_search_a_game">Try search a game!</string>
 	<string name="try_add_a_game_to_favourites">Try add a game to Favourites!</string>
+	<string name="status">Status</string>
 </resources>

@@ -3,7 +3,7 @@ package id.hanifsr.gamedb.data.source.remote.response
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
+import id.hanifsr.gamedb.data.source.local.entity.PopularDetailEntity
 import id.hanifsr.gamedb.domain.Game
 
 @JsonClass(generateAdapter = true)
@@ -49,8 +49,8 @@ fun GameDetailDTO.asDomainModel(): Game {
 	)
 }
 
-fun GameDetailDTO.asDatabaseEntity(): GameEntity {
-	return GameEntity(
+fun GameDetailDTO.asDatabaseEntity(): PopularDetailEntity {
+	return PopularDetailEntity(
 		id ?: 0,
 		name ?: "",
 		genres?.joinToString { genre -> genre?.name ?: "" } ?: "",
@@ -59,7 +59,6 @@ fun GameDetailDTO.asDatabaseEntity(): GameEntity {
 		ratingTop ?: 0.0,
 		developers?.joinToString { developer -> developer?.name ?: "" } ?: "",
 		backgroundImage ?: "",
-		descriptionRaw ?: "",
-		false
+		descriptionRaw ?: ""
 	)
 }

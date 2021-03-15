@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import id.hanifsr.gamedb.domain.Game
 
 @Entity
-data class GameEntity(
+data class FavouriteEntity(
 	@PrimaryKey
 	val id: Int,
 	val name: String,
@@ -15,11 +15,10 @@ data class GameEntity(
 	val ratingTop: Double,
 	val developers: String,
 	val backgroundImage: String,
-	val description: String,
-	var isFavourite: Boolean
+	val description: String
 )
 
-fun List<GameEntity>.asDomainModel(): List<Game> {
+fun List<FavouriteEntity>.asDomainModel(): List<Game> {
 	return map {
 		Game(
 			it.id,
@@ -31,12 +30,12 @@ fun List<GameEntity>.asDomainModel(): List<Game> {
 			it.developers,
 			it.backgroundImage,
 			it.description,
-			it.isFavourite
+			true
 		)
 	}
 }
 
-fun GameEntity.asDomainModel(): Game {
+fun FavouriteEntity.asDomainModel(): Game {
 	return Game(
 		id,
 		name,
@@ -47,6 +46,6 @@ fun GameEntity.asDomainModel(): Game {
 		developers,
 		backgroundImage,
 		description,
-		isFavourite
+		true
 	)
 }

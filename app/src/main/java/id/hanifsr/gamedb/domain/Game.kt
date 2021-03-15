@@ -1,6 +1,6 @@
 package id.hanifsr.gamedb.domain
 
-import id.hanifsr.gamedb.data.source.local.entity.GameEntity
+import id.hanifsr.gamedb.data.source.local.entity.FavouriteEntity
 
 data class Game(
 	val id: Int,
@@ -15,8 +15,8 @@ data class Game(
 	val isFavourite: Boolean
 )
 
-fun Game.asDatabaseEntity(): GameEntity {
-	return GameEntity(
+fun Game.asDatabaseEntity(): FavouriteEntity {
+	return FavouriteEntity(
 		id,
 		name,
 		genres,
@@ -25,7 +25,6 @@ fun Game.asDatabaseEntity(): GameEntity {
 		ratingTop,
 		developers,
 		backgroundImage,
-		description,
-		true
+		description
 	)
 }

@@ -43,15 +43,10 @@ class HomeFragment : Fragment() {
 			viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
 			viewModel.popularGames.observe(viewLifecycleOwner, {
 				when (it) {
-					is Result.Loading -> showMark(true)
+					is Result.Loading -> showMark(loading = true, false, null)
 					is Result.Success -> onPopularGamesFetched(it.data)
-					is Result.Empty -> Toast.makeText(
-						activity,
-						"Games are empty!",
-						Toast.LENGTH_LONG
-					).show()
-					is Result.Error -> Toast.makeText(activity, it.errorMessage, Toast.LENGTH_LONG)
-						.show()
+					is Result.Empty -> showMark(loading = false, true, "Games are empty!")
+					is Result.Error -> showMark(loading = false, true, it.errorMessage)
 				}
 			})
 		}
@@ -95,18 +90,28 @@ class HomeFragment : Fragment() {
 
 	private fun onPopularGamesFetched(games: List<Game>) {
 		adapter.games = games
-		showMark(false)
+		showMark(loading = false, false, null)
 	}
 
-	private fun showMark(state: Boolean) {
-		if (state) {
+	private fun showMark(loading: Boolean, error: Boolean, message: String?) {
+		if (loading) {
 			binding.pbHome.visibility = View.VISIBLE
+			binding.ivStatusHome.visibility = View.GONE
+			binding.tvStatusHome.visibility = View.GONE
 			binding.tvPopular.visibility = View.GONE
 			binding.tvThisMonth.visibility = View.GONE
 		} else {
 			binding.pbHome.visibility = View.GONE
-			binding.tvPopular.visibility = View.VISIBLE
-			binding.tvThisMonth.visibility = View.VISIBLE
+			if (error) {
+				binding.ivStatusHome.visibility = View.VISIBLE
+				binding.tvStatusHome.visibility = View.VISIBLE
+				binding.tvStatusHome.text = message
+				binding.tvPopular.visibility = View.GONE
+				binding.tvThisMonth.visibility = View.GONE
+			} else {
+				binding.tvPopular.visibility = View.VISIBLE
+				binding.tvThisMonth.visibility = View.VISIBLE
+			}
 		}
 	}
 }
